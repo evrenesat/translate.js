@@ -1,3 +1,9 @@
+Notice
+======
+
+This is a fork to make this module useable on servers and with browserify. If
+you don't use any of them, go to the original repo.
+
 translate.js (v0.0.2)
 =====================
 
@@ -9,23 +15,24 @@ Usage:
 ------
 
 ```JavaScript
+var translate = require('translate.js');
+
 var messages = {
   translationKey: 'translationValue'
-}
+};
 
 var options = {
     debug: true, //[Boolean]: Logs missing translations to console. Defaults to false.
-    namespaceSplitter: '.' //[String|RegExp]: You can customize the part which splits namespace and translationKeys. Defaults to '::'.
-}
+};
 
-var t = libTranslate.getTranslationFunction(messages, [options])
+var t = translate(messages, [options]);
 
-t('translationKey')
-t('translationKey', count)
-t('translationKey', {replaceKey: 'replacevalue'})
-t('translationKey', count, {replaceKey: 'replacevalue'})
-t('translationKey', {replaceKey: 'replacevalue'}, count)
-t('moduleA::translationKey')
+t('translationKey');
+t('translationKey', count);
+t('translationKey', {replaceKey: 'replacevalue'});
+t('translationKey', count, {replaceKey: 'replacevalue'});
+t('translationKey', {replaceKey: 'replacevalue'}, count);
+t('moduleA::translationKey');
 
 ```
 
@@ -71,7 +78,8 @@ var messages = {
 
 Then bind the translation function to something short:
 ```JavaScript
-var t = libTranslate.getTranslationFunction(messages)
+var translate = require('translate.js');
+var t = translate(messages)
 ```
 
 And use it like this:
