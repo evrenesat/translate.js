@@ -25,6 +25,7 @@ var options = {
     // These are the defaults:
     debug: false,  //[Boolean]: Logs missing translations to console if true`.
     namespaceSplitter: '::',  // [String|RegExp]: Customizes the translationKey namespace splitter.
+    pluralize: function(n,translKey){ return n; }  //[Function(count,translationKey)]: Provides a custom pluralization mapping function.
 };
 
 var t = translate(messages, [options]);
@@ -106,4 +107,28 @@ t('hits', 99) => '99 Hits'
 //combined count and placeholders
 t('date', 2, {day: '13', year: 2014}) => '13. February 2014'
 
+```
+
+### Custom pluralization
+
+You can also do customized pluralization like this:
+
+```js
+var messages_IS = {
+    sheep: {
+        0: 'Engar kindur',
+        1: '{n} kind',
+        2: '{n} kindur'
+    }
+};
+var pluralize_IS = function ( n, tarnslationKey ) {
+    // Icelandic rules: Numbers ending in 1 are singular - unless ending in 11.
+    return n===0 ? 0 : (n%10 !== 1 || n%100 === 11) ? 2 : 1;
+};
+var t = translate( messages_IS, { pluralize:pluralize_IS });
+
+t('sheep', 0) => 'Engar kindur'
+t('sheep', 1) => '1 kind'
+t('sheep', 2) => '2 kindur'
+t('sheep', 21) => '21 kind'
 ```

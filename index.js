@@ -10,15 +10,16 @@
  *    translationKey: 'value123'
  *  }
  * }
- * 
+ *
  * var options = {
  *   // These are the defaults:
  *   debug: false, //[Boolean]: Logs missing translations to console if `true`.
  *   namespaceSplitter: '::', //[String|RegExp]: Customizes the translationKey namespace splitter.
+ *   pluralize: function(n,translKey){ return n; } //[Function(count,translationKey)]: Provides a custom pluralization mapping function.
  * }
- * 
+ *
  * var t = libTranslate.getTranslationFunction(messages, [options])
- * 
+ *
  * t('translationKey')
  * t('translationKey', count)
  * t('translationKey', {replaceKey: 'replacevalue'})
@@ -57,7 +58,7 @@ module.exports = function(messageObject, options) {
     }
 
     //@todo make this more robust. maybe support more levels?
-    var components = translationKey.split(namespaceSplitter); 
+    var components = translationKey.split(namespaceSplitter);
     var namespace = components[0];
     var key = components[1];
 
@@ -74,9 +75,11 @@ module.exports = function(messageObject, options) {
         debug && console.log('[Translation] No plural forms found.');
         return null;
       }
-
-      if(translation[count]){
-        translation = translation[count];
+      var mappedCount = options.pluralize ?
+                            options.pluralize( count, translation ):
+                            count;
+      if(translation[mappedCount]){
+        translation = translation[mappedCount];
       } else if(translation.n) {
         translation = translation.n;
       } else {
