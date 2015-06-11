@@ -1,6 +1,6 @@
 {
   "name": "translate.js",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Javascript micro library for translations (i18n) with support for placeholders and multiple plural forms.",
   "devDependencies": {
     "expect.js": "^0.3.1",
@@ -26,10 +26,12 @@
     "name": "Jonas Girnatis",
     "email": "dermusterknabe@gmail.com"
   },
-  "contributors": [{
-    "name": "Stephan Hoyer",
-    "email": "ste.hoyer@gmail.com"
-  }],
+  "contributors": [
+    {
+      "name": "Stephan Hoyer",
+      "email": "ste.hoyer@gmail.com"
+    }
+  ],
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/musterknabe/translate.js/issues"
