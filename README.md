@@ -22,7 +22,9 @@ var messages = {
 };
 
 var options = {
-    debug: true, //[Boolean]: Logs missing translations to console. Defaults to false.
+    // These are the defaults:
+    debug: false,  //[Boolean]: Logs missing translations to console if true`.
+    namespaceSplitter: '::',  // [String|RegExp]: Customizes the translationKey namespace splitter.
 };
 
 var t = translate(messages, [options]);
