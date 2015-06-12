@@ -199,27 +199,27 @@ describe("translate.js", function() {
     // Icelandic rules: Numbers ending in 1 are singular - unless ending in 11.
 		return n===0 ? 0 : (n%10 !== 1 || n%100 === 11) ? 2 : 1;
 	};
-	var t5 = translate(translationsObject, { pluralize: pluralize_IS });
+	var t3b = translate(translationsObject, { pluralize: pluralize_IS });
 	['','namespaceA::'].forEach(function (ns) {
 			var nsTitle = ns ? ' [namespace support]' : '';
 
 			it('should pluralize (0) correctly in Icelandic'+nsTitle, function () {
-				expect(t5(ns+'icelandicSheep', 0)).to.equal('Engar kindur');
+				expect(t3b(ns+'icelandicSheep', 0)).to.equal('Engar kindur');
 			});
 			it('should pluralize (1) correctly in Icelandic'+nsTitle, function () {
-				expect(t5(ns+'icelandicSheep', 1)).to.equal('1 kind');
+				expect(t3b(ns+'icelandicSheep', 1)).to.equal('1 kind');
 			});
 			it('should pluralize (2) correctly in Icelandic'+nsTitle, function () {
-				expect(t5(ns+'icelandicSheep', 2)).to.equal('2 kindur');
+				expect(t3b(ns+'icelandicSheep', 2)).to.equal('2 kindur');
 			});
 			it('should pluralize (11) correctly in Icelandic'+nsTitle, function () {
-				expect(t5(ns+'icelandicSheep', 11)).to.equal('11 kindur');
+				expect(t3b(ns+'icelandicSheep', 11)).to.equal('11 kindur');
 			});
 			it('should pluralize (21) correctly in Icelandic'+nsTitle, function () {
-				expect(t5(ns+'icelandicSheep', 21)).to.equal('21 kind');
+				expect(t3b(ns+'icelandicSheep', 21)).to.equal('21 kind');
 			});
 			it('should pluralize (29) correctly in Icelandic'+nsTitle, function () {
-				expect(t5(ns+'icelandicSheep', 29)).to.equal('29 kindur');
+				expect(t3b(ns+'icelandicSheep', 29)).to.equal('29 kindur');
 			});
 		})
 
@@ -227,6 +227,17 @@ describe("translate.js", function() {
 	var t4 = translate(translationsObject, 'asd');
 	it("should return a translated string with the correct plural form and replaced placeholders: t(key, count, replacements) [namespace support + wrong options arg]", function() {
 		expect(t4('namespaceA::date', 2, {day: '13', year: 2014})).to.equal('13. February 2014');
+	});
+
+
+	//debug enabled
+	var t5 = libTranslate.getTranslationFunction(translationsObject, {debug: true});
+	it("should return @@translationKey@@ if no translation is found and debug is true", function() {
+		expect(t5('nonexistentkey')).toEqual('@@nonexistentkey@@');
+	});
+
+	it("should return @@translationKey@@ if no translation is found [namespace support]", function() {
+		expect(t5('namespaceA::nonexistentkey')).toEqual('@@namespaceA::nonexistentkey@@');
 	});
 
 	// it("should return ", function() {

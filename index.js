@@ -13,7 +13,7 @@
  *
  * var options = {
  *   // These are the defaults:
- *   debug: false, //[Boolean]: Logs missing translations to console if `true`.
+ *   debug: false, //[Boolean]: Logs missing translations to console and add "@@" around output if `true`.
  *   namespaceSplitter: '::', //[String|RegExp]: Customizes the translationKey namespace splitter.
  *   pluralize: function(n,translKey){ return n; } //[Function(count,translationKey)]: Provides a custom pluralization mapping function.
  * }
@@ -124,8 +124,11 @@ module.exports = function(messageObject, options) {
     translation = replacePlaceholders(translation, replacements);
 
     if (translation === null) {
-      debug && console.log('Translation for "' + translationKey + '" not found.');
-      return '@@' + translationKey + '@@';
+      translation = debug ? '@@' + translationKey + '@@' : translationKey;
+
+      if (debug) {
+          console.log('Translation for "' + translationKey + '" not found.');
+      }
     }
 
     return translation;
