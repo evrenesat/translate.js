@@ -12,8 +12,9 @@
  * }
  *
  * var options = {
- *   debug: true, //[Boolean]: Logs missing translations to console. Defaults to false.
- *   namespaceSplitter: '::' //[String|RegExp]: You can customize the part which splits namespace and translationKeys. Defaults to '::'.
+ *   // These are the defaults:
+ *   debug: false, //[Boolean]: Logs missing translations to console if `true`.
+ *   namespaceSplitter: '::', //[String|RegExp]: Customizes the translationKey namespace splitter.
  *   pluralize: function(n,translKey){ return Math.abs(n); } //[Function(count,translationKey)]: Provides a custom pluralization mapping function.
  * }
  *
