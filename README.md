@@ -139,3 +139,5 @@ Translate.js comes with a predefined `pluralize` functions for [several language
 var pluralize_IS = require('translate.js/pluralize/is');
 var t = translate( messages_IS, { pluralize:pluralize_IS  });
 ```
+
+Here's a large list of [pluralization algorithms by language](http://docs.translatehouse.org/projects/localization-guide/en/latest/l10n/pluralforms.html?id=l10n/pluralforms).
