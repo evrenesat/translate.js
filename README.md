@@ -4,12 +4,20 @@ Notice
 This is a fork to make this module useable on servers and with browserify. If
 you don't use any of them, go to the original repo.
 
-translate.js (v0.0.2)
+translate.js (v0.0.3)
 =====================
 
 Javascript micro library for translations (i18n) with support for placeholders and multiple plural forms.
 
 Size: ~800 bytes minified and gziped.
+
+
+Installation:
+------
+
+```sh
+npm install translate.js
+```
 
 Usage:
 ------
