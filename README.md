@@ -33,7 +33,7 @@ var options = {
     // These are the defaults:
     debug: false,  //[Boolean]: Logs missing translations to console if true`.
     namespaceSplitter: '::',  // [String|RegExp]: Customizes the translationKey namespace splitter.
-    pluralize: function(n,translKey){ return n; }  //[Function(count,translationKey)]: Provides a custom pluralization mapping function.
+    pluralize: function(n,translKey){ return Math.abs(n); }  //[Function(count,translationKey)]: Provides a custom pluralization mapping function.
 };
 
 var t = translate(messages, [options]);
@@ -140,3 +140,12 @@ t('sheep', 1) => '1 kind'
 t('sheep', 2) => '2 kindur'
 t('sheep', 21) => '21 kind'
 ```
+
+Translate.js comes with a predefined `pluralize` functions for [several languages](pluralize/). These can be required into your code as needed, like so:
+
+```js
+var pluralize_IS = require('translate.js/pluralize/is');
+var t = translate( messages_IS, { pluralize:pluralize_IS  });
+```
+
+Here's a large list of [pluralization algorithms by language](http://docs.translatehouse.org/projects/localization-guide/en/latest/l10n/pluralforms.html?id=l10n/pluralforms).

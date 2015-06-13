@@ -15,7 +15,7 @@
  *   // These are the defaults:
  *   debug: false, //[Boolean]: Logs missing translations to console if `true`.
  *   namespaceSplitter: '::', //[String|RegExp]: Customizes the translationKey namespace splitter.
- *   pluralize: function(n,translKey){ return n; } //[Function(count,translationKey)]: Provides a custom pluralization mapping function.
+ *   pluralize: function(n,translKey){ return Math.abs(n); } //[Function(count,translationKey)]: Provides a custom pluralization mapping function.
  * }
  *
  * var t = libTranslate.getTranslationFunction(messages, [options])
@@ -77,7 +77,7 @@ module.exports = function(messageObject, options) {
       }
       var mappedCount = options.pluralize ?
                             options.pluralize( count, translation ):
-                            count;
+                            Math.abs(count);
       if(translation[mappedCount]){
         translation = translation[mappedCount];
       } else if(translation.n) {
