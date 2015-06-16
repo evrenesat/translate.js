@@ -31,7 +31,7 @@ var messages = {
 
 var options = {
     // These are the defaults:
-    debug: false,  //[Boolean]: Logs missing translations to console if true`.
+    debug: false, //[Boolean]: Logs missing translations to console and add "@@" around output if `true`.
     namespaceSplitter: '::',  // [String|RegExp]: Customizes the translationKey namespace splitter.
     pluralize: function(n,translKey){ return Math.abs(n); }  //[Function(count,translationKey)]: Provides a custom pluralization mapping function.
 };
