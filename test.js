@@ -15,7 +15,8 @@ describe("translate.js", function() {
         icelandicSheep: {
             0: 'Engar kindur',
             1: '{n} kind', // some languages use singular for any number that ends with 1 (i.e. 101, 21, 31, 51)
-            2: '{n} kindur'
+            n: '{n} kindur',
+            13: 'Baaahd luck!' // Aribtrary translation outside of pluralization rules
         },
         date: {
             1: '{day}. January {year}',
@@ -48,7 +49,8 @@ describe("translate.js", function() {
 	        icelandicSheep: {
 	            0: 'Engar kindur',
 	            1: '{n} kind', // some languages use singular for any number that ends with 1 (i.e. 101, 21, 31, 51)
-	            2: '{n} kindur'
+	            n: '{n} kindur',
+	            13: 'Baaahd luck!' // Aribtrary translation outside of pluralization rules
 	        },
 	        date: {
 	            1: '{day}. January {year}',
@@ -220,6 +222,12 @@ describe("translate.js", function() {
 			});
 			it('should pluralize (29) correctly in Icelandic'+nsTitle, function () {
 				expect(t5(ns+'icelandicSheep', 29)).to.equal('29 kindur');
+			});
+			it('should return explicit pluralization property regardless of pluralization function'+nsTitle, function () {
+				expect(t5(ns+'icelandicSheep', 13)).to.equal('Baaahd luck!');
+			});
+			it('should automatically return correct pluralization for negative counts'+nsTitle, function () {
+				expect(t5(ns+'icelandicSheep', -13)).to.equal('Baaahd luck!');
 			});
 		})
 

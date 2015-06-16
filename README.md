@@ -118,7 +118,8 @@ var messages_IS = {
     sheep: {
         0: 'Engar kindur',
         1: '{n} kind',
-        2: '{n} kindur'
+        2: '{n} kindur',
+        13: 'Baaahd luck!'
     }
 };
 var pluralize_IS = function ( n, tarnslationKey ) {
@@ -131,6 +132,7 @@ t('sheep', 0) => 'Engar kindur'
 t('sheep', 1) => '1 kind'
 t('sheep', 2) => '2 kindur'
 t('sheep', 21) => '21 kind'
+t('sheep', 13) => 'Baaahd luck'  // explicit translation takes precedence 
 ```
 
 Translate.js comes with a predefined `pluralize` functions for [several languages](pluralize/). These can be required into your code as needed, like so:
