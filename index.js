@@ -75,16 +75,22 @@ module.exports = function(messageObject, options) {
         debug && console.log('[Translation] No plural forms found.');
         return null;
       }
-      var mappedCount = options.pluralize ?
-                            options.pluralize( count, translation ):
-                            Math.abs(count);
-      if(translation[mappedCount]){
+      // Opinionated assumption: Pluralization rules are the same for negative and positive values.
+      // By normalizing all values to positive, pluralization functions become simpler, and less error-prone by accident.
+      var mappedCount = Math.abs(count);
+
+      if(translation[mappedCount] != null){
         translation = translation[mappedCount];
-      } else if(translation.n) {
-        translation = translation.n;
       } else {
-        debug && console.log('[Translation] No plural forms found for count:"' + count + '" in', translation);
-        translation = translation[Object.keys(translation).reverse()[0]];
+        mappedCount = options.pluralize ? options.pluralize( mappedCount, translation ) : mappedCount;
+        if(translation[mappedCount] != null){
+          translation = translation[mappedCount];
+        } else if(translation.n != null) {
+          translation = translation.n;
+        } else {
+          debug && console.log('[Translation] No plural forms found for count:"' + count + '" in', translation);
+          translation = translation[Object.keys(translation).reverse()[0]];
+        }
       }
     }
 

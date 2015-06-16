@@ -126,12 +126,13 @@ var messages_IS = {
     sheep: {
         0: 'Engar kindur',
         1: '{n} kind',
-        2: '{n} kindur'
+        2: '{n} kindur',
+        13: 'Baaahd luck!'
     }
 };
 var pluralize_IS = function ( n, tarnslationKey ) {
     // Icelandic rules: Numbers ending in 1 are singular - unless ending in 11.
-    return n===0 ? 0 : (n%10 !== 1 || n%100 === 11) ? 2 : 1;
+    return (n%10 !== 1 || n%100 === 11) ? 2 : 1;
 };
 var t = translate( messages_IS, { pluralize:pluralize_IS });
 
@@ -139,6 +140,7 @@ t('sheep', 0) => 'Engar kindur'
 t('sheep', 1) => '1 kind'
 t('sheep', 2) => '2 kindur'
 t('sheep', 21) => '21 kind'
+t('sheep', 13) => 'Baaahd luck'  // explicit translation takes precedence 
 ```
 
 Translate.js comes with a predefined `pluralize` functions for [several languages](pluralize/). These can be required into your code as needed, like so:
