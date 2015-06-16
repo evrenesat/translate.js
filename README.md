@@ -124,7 +124,7 @@ var messages_IS = {
 };
 var pluralize_IS = function ( n, tarnslationKey ) {
     // Icelandic rules: Numbers ending in 1 are singular - unless ending in 11.
-    return n===0 ? 0 : (n%10 !== 1 || n%100 === 11) ? 2 : 1;
+    return (n%10 !== 1 || n%100 === 11) ? 2 : 1;
 };
 var t = translate( messages_IS, { pluralize:pluralize_IS });
 

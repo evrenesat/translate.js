@@ -1,4 +1,4 @@
 // English rules: Only 1 is singular
 module.exports = function ( n/*, tarnslationKey*/ ) {
-  return Math.abs(n);
+  return n!=1 ? 2 : 1;
 };
