@@ -34,17 +34,10 @@
 
 'use strict';
 
-var isNumeric = function(obj) {
-  return !isNaN(parseFloat(obj)) && isFinite(obj);
-};
-
 var isObject = function(obj) {
-  return typeof obj === 'object' && obj !== null;
+  return obj  &&  typeof obj === 'object';
 };
 
-var isString = function(obj) {
-  return Object.prototype.toString.call(obj) === '[object String]';
-};
 
 module.exports = function(messageObject, options) {
   options = isObject(options) ? options : {};
@@ -53,87 +46,84 @@ module.exports = function(messageObject, options) {
   var namespaceSplitter = options.namespaceSplitter || '::';
 
   function getTranslationValue(translationKey) {
-    if(messageObject[translationKey]) {
-      return messageObject[translationKey];
+    var transValue = messageObject[translationKey];
+    if( transValue == null ) {
+      var path = translationKey.split( namespaceSplitter );
+      if ( path.length > 1 ) {
+        var i = 0;
+        var len = path.length;
+        transValue = messageObject;
+        while ( len > i ) {
+          transValue = transValue[ path[i++]||'' ];
+          if ( transValue == null ) {
+            break;
+          }
+        }
+      }
     }
-
-    //@todo make this more robust. maybe support more levels?
-    var components = translationKey.split(namespaceSplitter);
-    var namespace = components[0];
-    var key = components[1];
-
-    if(messageObject[namespace] && messageObject[namespace][key]) {
-      return messageObject[namespace][key];
-    }
-
-    return null;
+    return transValue;
   }
+
 
   function getPluralValue(translation, count) {
-    if (isObject(translation)) {
-      if(Object.keys(translation).length === 0) {
-        debug && console.log('[Translation] No plural forms found.');
-        return null;
-      }
-      // Opinionated assumption: Pluralization rules are the same for negative and positive values.
-      // By normalizing all values to positive, pluralization functions become simpler, and less error-prone by accident.
-      var mappedCount = Math.abs(count);
+    // Opinionated assumption: Pluralization rules are the same for negative and positive values.
+    // By normalizing all values to positive, pluralization functions become simpler, and less error-prone by accident.
+    var mappedCount = Math.abs(count);
 
+    if(translation[mappedCount] != null){
+      translation = translation[mappedCount];
+    } else {
+      mappedCount = options.pluralize ? options.pluralize( mappedCount, translation ) : mappedCount;
       if(translation[mappedCount] != null){
         translation = translation[mappedCount];
+      } else if(translation.n != null) {
+        translation = translation.n;
       } else {
-        mappedCount = options.pluralize ? options.pluralize( mappedCount, translation ) : mappedCount;
-        if(translation[mappedCount] != null){
-          translation = translation[mappedCount];
-        } else if(translation.n != null) {
-          translation = translation.n;
-        } else {
-          debug && console.log('[Translation] No plural forms found for count:"' + count + '" in', translation);
-          translation = translation[Object.keys(translation).reverse()[0]];
-        }
+        debug && console.warn('No plural forms found for "' + count + '" in', translation);
       }
     }
-
     return translation;
   }
 
-  function replacePlaceholders(translation, replacements) {
-    if (isString(translation)) {
-      return translation.replace(/\{(\w*)\}/g, function (match, key) {
-        if(!replacements.hasOwnProperty(key)) {
-          debug && console.log('Could not find replacement "' + key + '" in provided replacements object:', replacements);
-
-          return '{' + key + '}';
+  function replacePlaceholders(translation, replacements, count) {
+    return translation.replace(/\{(\w*)\}/g, function (match, key) {
+      var val = replacements[key];
+      if (!replacements.hasOwnProperty(key)) {
+        if ( key === 'n' || count != null) {
+          val = count;
+        } else {
+          debug && console.warn('No "' + key + '" in placeholder object:', replacements);
+          val = match;
         }
-
-        return replacements.hasOwnProperty(key) ? replacements[key] : key;
-      });
-    }
-
-    return translation;
+      }
+      return val;
+    });
   }
 
-  return function (translationKey) {
-    var replacements = isObject(arguments[1]) ? arguments[1] : (isObject(arguments[2]) ? arguments[2] : {});
-    var count = isNumeric(arguments[1]) ? arguments[1] : (isNumeric(arguments[2]) ? arguments[2] : null);
+  return function (translationKey, count, replacements) {
+    if ( isObject(count) ) {
+      var tmp = replacements;
+      replacements = count;
+      count = tmp;
+    }
+    replacements = replacements || {};
+    count = typeof count === 'number' ? count : null;
 
     var translation = getTranslationValue(translationKey);
 
-    if (count !== null) {
-      replacements.n = replacements.n ? replacements.n : count;
-
+    if ( count != null && isObject(translation) ) {
       //get appropriate plural translation string
       translation = getPluralValue(translation, count);
     }
-
-    //replace {placeholders}
-    translation = replacePlaceholders(translation, replacements);
-
-    if (translation === null) {
-      translation = debug ? '@@' + translationKey + '@@' : translationKey;
+    if ( typeof translation === 'string' ) {
+      //replace {placeholders}
+      translation = replacePlaceholders(translation, replacements, count);
+    } else {
+      translation = translationKey;
 
       if (debug) {
-          console.log('Translation for "' + translationKey + '" not found.');
+          translation = '@@' + translation + '@@';
+          console.warn('Translation for "' + translationKey + '" not found.');
       }
     }
 

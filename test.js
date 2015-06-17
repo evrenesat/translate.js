@@ -68,7 +68,9 @@ describe("translate.js", function() {
 	        },
 
 	        'Prosa Key': 'This is prosa!'
-	    }
+	    },
+
+      comboCounter: '{name} is {n} years old.',
 	}
 
 	var t = translate(translationsObject);
@@ -178,6 +180,41 @@ describe("translate.js", function() {
 	it("should return a translated string with the correct plural form and replaced placeholders: t(key, count, replacements) [namespace support]", function() {
 		expect(t('namespaceA::date', 2, {day: '13', year: 2014})).to.equal('13. February 2014');
 	});
+
+
+	it("should support arbitrarily deep namespaces", function() {
+		expect(t('namespaceA::icelandicSheep::13')).to.equal('Baaahd luck!');
+	});
+
+
+  var placeholders = { name:'Alice' };
+	it('should handle combination of count and named placeholders', function () {
+		expect(t('comboCounter', 10, placeholders)).to.equal('Alice is 10 years old.');
+		expect(t('comboCounter', placeholders, 10)).to.equal('Alice is 10 years old.');
+	});
+	it('shouldn\'t modify the placeholder object', function () {
+		expect('n' in placeholders).to.equal(false);
+	});
+
+
+	var nonStringTranslations = {
+		foo: 10,
+		bar: [],
+		baz: {},
+		heh: null,
+		ooh: true,
+		happensToBeString: 'OK'
+	}
+	var t0 = translate(nonStringTranslations);
+	it('should treat any non-string translations as "missing"', function () {
+		expect(t0('foo')).to.equal('foo');
+		expect(t0('bar')).to.equal('bar');
+		expect(t0('baz')).to.equal('baz');
+		expect(t0('heh')).to.equal('heh');
+		expect(t0('ooh')).to.equal('ooh');
+		expect(t0('happensToBeString')).to.equal('OK');
+	});
+
 
 	//every thing with namespace support + custom namespace splitter
 
