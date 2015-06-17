@@ -73,8 +73,8 @@ describe("translate.js", function() {
 
 	var t = translate(translationsObject);
 
-	it("should return @@translationKey@@ if no translation is found", function() {
-		expect(t('nonexistentkey')).to.equal('@@nonexistentkey@@');
+	it("should return translationKey if no translation is found", function() {
+		expect(t('nonexistentkey')).to.equal('nonexistentkey');
 	});
 
 	it("should return a translated string", function() {
@@ -127,8 +127,8 @@ describe("translate.js", function() {
 
 
 	//every thing with namespace support
-	it("should return @@translationKey@@ if no translation is found [namespace support]", function() {
-		expect(t('namespaceA::nonexistentkey')).to.equal('@@namespaceA::nonexistentkey@@');
+	it("should return translationKey if no translation is found [namespace support]", function() {
+		expect(t('namespaceA::nonexistentkey')).to.equal('namespaceA::nonexistentkey');
 	});
 
 	it("should return a translated string [namespace support]", function() {
