@@ -1,11 +1,13 @@
+[![Build Status](https://travis-ci.org/StephanHoyer/translate.js.svg)](https://travis-ci.org/StephanHoyer/translate.js)
+
 Notice
 ======
 
 This is a fork to make this module useable on servers and with browserify. If
 you don't use any of them, go to the original repo.
 
-translate.js (v0.0.3)
-=====================
+translate.js
+============
 
 Javascript micro library for translations (i18n) with support for placeholders and multiple plural forms.
 
