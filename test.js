@@ -35,7 +35,12 @@ describe("translate.js", function() {
 
         'Prosa Key': 'This is prosa!',
 
+        'namespaceA::literalKey': 'Literal',
+        'namespaceA::preferredKey': 'Preferred',
+
 	    namespaceA: {
+	    		preferredKey: 'Ingored (superceded by literal key of same name)',
+
 	        plain: 'I like this.',
 	        like: 'I like {thing}!',
 	        simpleCounter: 'The count is {n}.',
@@ -194,6 +199,13 @@ describe("translate.js", function() {
 	});
 	it('shouldn\'t modify the placeholder object', function () {
 		expect('n' in placeholders).to.equal(false);
+	});
+
+	it('should first check the existence of a literal key before entering namespaces', function () {
+		expect(t('namespaceA::literalKey')).to.equal('Literal');
+	});
+	it('should prefer literal key over an existing namespaced key', function () {
+		expect(t('namespaceA::preferredKey')).to.equal('Preferred');
 	});
 
 
