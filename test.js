@@ -277,6 +277,70 @@ describe('translate.js', function() {
   });
 
 
+
+  var tXKeys = {
+    name: 'English',
+    ns: {
+      x: {
+        13: 'Thirteen',
+        99: 'Ninety-nine',
+        n:  'Default'
+      }
+    }
+  };
+  var tX;
+
+  it('should gracefully handle no parameters', function () {
+    tX= translate();
+    expect( tX('name') ).to.equal( 'name' );
+    expect( tX('ns::x',1) ).to.equal( 'ns::x' );
+  });
+
+  it('should gracefully handle nully (not falsey) parameters', function () {
+    tX = translate(undefined, null);
+    expect( tX('name') ).to.equal( 'name' );
+    expect( tX('ns::x',1) ).to.equal( 'ns::x' );
+  });
+
+  it('should expose .keys and .opts properties', function () {
+    expect( tX.keys ).to.be.an( 'object' );
+    expect( tX.opts ).to.be.an( 'object' );
+    expect( tX.keys ).to.eql( {} );
+  });
+
+  it('should allow late binding of translation keys', function () {
+    tX.keys.foo = 'bar';
+    expect( tX('foo') ).to.equal( 'bar' );
+  });
+
+  it('should allow late binding of translation keys', function () {
+    tX.keys = tXKeys;
+    expect( tX('foo') ).to.equal( 'foo' );
+    expect( tX('name') ).to.equal( 'English' );
+    expect( tX('ns::x',1) ).to.equal( 'Default' );
+  });
+
+  it('should allow late binding of pluralization', function () {
+    tX.opts.pluralize = function (n) { return 99; };
+    expect( tX('ns::x',1) ).to.equal( 'Ninety-nine' );
+  });
+
+  it('should allow late binding of namespaceSplitter', function () {
+    tX.opts.namespaceSplitter = '__';
+    expect( tX('ns__x',1) ).to.equal( 'Ninety-nine' );
+  });
+
+  it('should gracefully handle completely overloading the opts', function () {
+    tX.opts = { pluralize: function (n) { return 13; } };
+    expect( tX('ns::x',1) ).to.equal( 'Thirteen' );
+  });
+
+  it('should gracefully handle accidental removal of opts', function () {
+    delete tX.opts; // Oops!
+    expect( tX('ns::x',1) ).to.equal( 'Default' ); // no pluralization found
+  });
+
+
   // it('should return ', function() {
   //  expect(t()).to.equal();
   // });

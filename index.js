@@ -32,6 +32,8 @@
  * @licence May be freely distributed under the MIT license.
  */
 
+/* global console, module */
+
 'use strict';
 
 var isObject = function(obj) {
@@ -40,19 +42,16 @@ var isObject = function(obj) {
 
 
 module.exports = function(messageObject, options) {
-  options = isObject(options) ? options : {};
-
-  var debug = options.debug;
-  var namespaceSplitter = options.namespaceSplitter || '::';
+  var debug = options && options.debug;
 
   function getTranslationValue(translationKey) {
-    var transValue = messageObject[translationKey];
+    var transValue = tFunc.keys[translationKey];
     if( transValue == null ) {
-      var path = translationKey.split( namespaceSplitter );
+      var path = translationKey.split( tFunc.opts && tFunc.opts.namespaceSplitter || '::' );
       if ( path.length > 1 ) {
         var i = 0;
         var len = path.length;
-        transValue = messageObject;
+        transValue = tFunc.keys;
         while ( len > i ) {
           transValue = transValue[ path[i++]||'' ];
           if ( transValue == null ) {
@@ -73,7 +72,8 @@ module.exports = function(messageObject, options) {
     if(translation[mappedCount] != null){
       translation = translation[mappedCount];
     } else {
-      mappedCount = options.pluralize ? options.pluralize( mappedCount, translation ) : mappedCount;
+      var plFunc = (tFunc.opts||{}).pluralize;
+      mappedCount = plFunc ? plFunc( mappedCount, translation ) : mappedCount;
       if(translation[mappedCount] != null){
         translation = translation[mappedCount];
       } else if(translation.n != null) {
@@ -100,7 +100,7 @@ module.exports = function(messageObject, options) {
     });
   }
 
-  return function (translationKey, count, replacements) {
+  var tFunc = function (translationKey, count, replacements) {
     if ( isObject(count) ) {
       var tmp = replacements;
       replacements = count;
@@ -129,4 +129,10 @@ module.exports = function(messageObject, options) {
 
     return translation;
   };
+
+  tFunc.keys = messageObject || {};
+  tFunc.opts = options || {};
+
+
+  return tFunc;
 };
