@@ -297,6 +297,28 @@ describe("translate.js", function() {
 		expect(t5('namespaceA::nonexistentkey')).to.equal('@@namespaceA::nonexistentkey@@');
 	});
 
+
+	var t6Keys = {
+		fruit: '{0} apples, {1} oranges, {2} kiwis',
+		bread: '{0} buns, {n} scones',
+		items: {
+			1: '{0} item ({n})',
+			n: '{0} items ({n})'
+		}
+	};
+	var t6 = translate( t6Keys );
+	it('should accept placeholder values in arrays', function () {
+		expect( t6('fruit', ['shiny', 'round']) ).to.equal( 'shiny apples, round oranges, {2} kiwis' );
+	});
+	it('should mix count and array placeholders', function () {
+		expect( t6('bread', 7, [10]) ).to.equal( '10 buns, 7 scones' );
+		expect( t6('bread', [7], 10) ).to.equal( '7 buns, 10 scones' );
+	});
+	it('should mix array placeholders and pluralization', function () {
+		expect( t6('items', 1, ['Happy']) ).to.equal( 'Happy item (1)' );
+		expect( t6('items', 7, ['Funny']) ).to.equal( 'Funny items (7)' );
+	});
+
 	// it("should return ", function() {
 	// 	expect(t()).to.equal();
 	// });
