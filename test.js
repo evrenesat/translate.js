@@ -3,257 +3,258 @@ var translate = require('./index');
 var expect = require('expect.js');
 
 describe('translate.js', function() {
-	'use strict';
+  'use strict';
 
-	var translationsObject = {
-        plain: 'I like this.',
-        like: 'I like {thing}!',
-        simpleCounter: 'The count is {n}.',
-        hits: {
-            0: 'No Hits',
-            1: '{n} Hit',
-            2: '{n} Hitse',  //some slavic langs have multiple plural forms
-            3: '{n} Hitses', //some slavic langs have multiple plural forms
-            n: '{n} Hits'
-        },
-        icelandicSheep: {
-            0: 'Engar kindur',
-            1: '{n} kind', // some languages use singular for any number that ends with 1 (i.e. 101, 21, 31, 51)
-            n: '{n} kindur',
-            13: 'Baaahd luck!' // Aribtrary translation outside of pluralization rules
-        },
-        date: {
-            1: '{day}. January {year}',
-            2: '{day}. February {year}',
-            3: '{day}. March {year}',
-            4: '{day}. April {year}',
-            5: '{day}. May {year}',
-            6: '{day}. June {year}',
-            7: '{day}. July {year}',
-            8: '{day}. August {year}',
-            9: '{day}. September {year}',
-            10: '{day}. October {year}',
-            11: '{day}. November {year}',
-            12: '{day}. December {year}'
-        },
+  var translationsObject = {
 
-        'Prosa Key': 'This is prosa!',
+    plain: 'I like this.',
+    like: 'I like {thing}!',
+    simpleCounter: 'The count is {n}.',
+    hits: {
+      0: 'No Hits',
+      1: '{n} Hit',
+      2: '{n} Hitse',  //some slavic langs have multiple plural forms
+      3: '{n} Hitses', //some slavic langs have multiple plural forms
+      n: '{n} Hits'
+    },
+    icelandicSheep: {
+      0: 'Engar kindur',
+      1: '{n} kind', // some languages use singular for any number that ends with 1 (i.e. 101, 21, 31, 51)
+      n: '{n} kindur',
+      13: 'Baaahd luck!' // Aribtrary translation outside of pluralization rules
+    },
+    date: {
+      1: '{day}. January {year}',
+      2: '{day}. February {year}',
+      3: '{day}. March {year}',
+      4: '{day}. April {year}',
+      5: '{day}. May {year}',
+      6: '{day}. June {year}',
+      7: '{day}. July {year}',
+      8: '{day}. August {year}',
+      9: '{day}. September {year}',
+      10: '{day}. October {year}',
+      11: '{day}. November {year}',
+      12: '{day}. December {year}'
+    },
 
-        'namespaceA::literalKey': 'Literal',
-        'namespaceA::preferredKey': 'Preferred',
+    'Prosa Key': 'This is prosa!',
 
-	    namespaceA: {
-	    		preferredKey: 'Ingored (superceded by literal key of same name)',
+    'namespaceA::literalKey': 'Literal',
+    'namespaceA::preferredKey': 'Preferred',
 
-	        plain: 'I like this.',
-	        like: 'I like {thing}!',
-	        simpleCounter: 'The count is {n}.',
-	        hits: {
-	            0: 'No Hits',
-	            1: '{n} Hit',
-	            2: '{n} Hitse',  //some slavic langs have multiple plural forms
-	            3: '{n} Hitses', //some slavic langs have multiple plural forms
-	            n: '{n} Hits'
-	        },
-	        icelandicSheep: {
-	            0: 'Engar kindur',
-	            1: '{n} kind', // some languages use singular for any number that ends with 1 (i.e. 101, 21, 31, 51)
-	            n: '{n} kindur',
-	            13: 'Baaahd luck!' // Aribtrary translation outside of pluralization rules
-	        },
-	        date: {
-	            1: '{day}. January {year}',
-	            2: '{day}. February {year}',
-	            3: '{day}. March {year}',
-	            4: '{day}. April {year}',
-	            5: '{day}. May {year}',
-	            6: '{day}. June {year}',
-	            7: '{day}. July {year}',
-	            8: '{day}. August {year}',
-	            9: '{day}. September {year}',
-	            10: '{day}. October {year}',
-	            11: '{day}. November {year}',
-	            12: '{day}. December {year}'
-	        },
+    namespaceA: {
+      preferredKey: 'Ingored (superceded by literal key of same name)',
 
-	        'Prosa Key': 'This is prosa!'
-	    },
+      plain: 'I like this.',
+      like: 'I like {thing}!',
+      simpleCounter: 'The count is {n}.',
+      hits: {
+        0: 'No Hits',
+        1: '{n} Hit',
+        2: '{n} Hitse',  //some slavic langs have multiple plural forms
+        3: '{n} Hitses', //some slavic langs have multiple plural forms
+        n: '{n} Hits'
+      },
+      icelandicSheep: {
+        0: 'Engar kindur',
+        1: '{n} kind', // some languages use singular for any number that ends with 1 (i.e. 101, 21, 31, 51)
+        n: '{n} kindur',
+        13: 'Baaahd luck!' // Aribtrary translation outside of pluralization rules
+      },
+      date: {
+        1: '{day}. January {year}',
+        2: '{day}. February {year}',
+        3: '{day}. March {year}',
+        4: '{day}. April {year}',
+        5: '{day}. May {year}',
+        6: '{day}. June {year}',
+        7: '{day}. July {year}',
+        8: '{day}. August {year}',
+        9: '{day}. September {year}',
+        10: '{day}. October {year}',
+        11: '{day}. November {year}',
+        12: '{day}. December {year}'
+      },
 
-      comboCounter: '{name} is {n} years old.',
-	};
+      'Prosa Key': 'This is prosa!'
+    },
 
-	var t = translate( translationsObject );
+    comboCounter: '{name} is {n} years old.',
+  };
 
-	['','namespaceA::'].forEach(function (ns) {
-			var nsTitle = ns ? ' [namespace support]' : '';
+  var t = translate( translationsObject );
 
-			it('should return translationKey if no translation is found'+nsTitle, function () {
-				expect( t(ns+'nonexistentkey') ).to.equal( ns+'nonexistentkey' );
-			});
+  ['','namespaceA::'].forEach(function (ns) {
+    var nsTitle = ns ? ' [namespace support]' : '';
 
-			it('should return a translated string'+nsTitle, function () {
-				expect( t(ns+'plain') ).to.equal( 'I like this.' );
-			});
+    it('should return translationKey if no translation is found'+nsTitle, function () {
+      expect( t(ns+'nonexistentkey') ).to.equal( ns+'nonexistentkey' );
+    });
 
-			it('should return a translated string for prosa keys'+nsTitle, function () {
-				expect( t(ns+'Prosa Key') ).to.equal( 'This is prosa!' );
-			});
+    it('should return a translated string'+nsTitle, function () {
+      expect( t(ns+'plain') ).to.equal( 'I like this.' );
+    });
 
-			it('should return a translated string and replace a placeholder '+nsTitle, function () {
-				expect( t(ns+'like', {thing: 'Sun'}) ).to.equal( 'I like Sun!' );
-			});
+    it('should return a translated string for prosa keys'+nsTitle, function () {
+      expect( t(ns+'Prosa Key') ).to.equal( 'This is prosa!' );
+    });
 
-			it('should return a translated string and show missing placeholders'+nsTitle, function () {
-				expect( t(ns+'like') ).to.equal( 'I like {thing}!' );
-			});
+    it('should return a translated string and replace a placeholder '+nsTitle, function () {
+      expect( t(ns+'like', {thing: 'Sun'}) ).to.equal( 'I like Sun!' );
+    });
 
-			it('should return a translated string and replace a count'+nsTitle, function () {
-				expect( t(ns+'simpleCounter', 25) ).to.equal( 'The count is 25.' );
-			});
+    it('should return a translated string and show missing placeholders'+nsTitle, function () {
+      expect( t(ns+'like') ).to.equal( 'I like {thing}!' );
+    });
 
-			it('should return a translated string with the correct plural form (0)'+nsTitle, function () {
-				expect( t(ns+'hits', 0) ).to.equal( 'No Hits' );
-			});
+    it('should return a translated string and replace a count'+nsTitle, function () {
+      expect( t(ns+'simpleCounter', 25) ).to.equal( 'The count is 25.' );
+    });
 
-			it('should return a translated string with the correct plural form (1)'+nsTitle, function () {
-				expect( t(ns+'hits', 1) ).to.equal( '1 Hit' );
-			});
+    it('should return a translated string with the correct plural form (0)'+nsTitle, function () {
+      expect( t(ns+'hits', 0) ).to.equal( 'No Hits' );
+    });
 
-			it('should return a translated string with the correct plural form (2)'+nsTitle, function () {
-				expect( t(ns+'hits', 2) ).to.equal( '2 Hitse' );
-			});
+    it('should return a translated string with the correct plural form (1)'+nsTitle, function () {
+      expect( t(ns+'hits', 1) ).to.equal( '1 Hit' );
+    });
 
-			it('should return a translated string with the correct plural form (3)'+nsTitle, function () {
-				expect( t(ns+'hits', 3) ).to.equal( '3 Hitses' );
-			});
+    it('should return a translated string with the correct plural form (2)'+nsTitle, function () {
+      expect( t(ns+'hits', 2) ).to.equal( '2 Hitse' );
+    });
 
-			it('should return a translated string with the correct plural form (4)'+nsTitle, function () {
-				expect( t(ns+'hits', 4) ).to.equal( '4 Hits' );
-			});
+    it('should return a translated string with the correct plural form (3)'+nsTitle, function () {
+      expect( t(ns+'hits', 3) ).to.equal( '3 Hitses' );
+    });
 
-			it('should return a translated string with the correct plural form and replaced placeholders: t(key, replacements, count)'+nsTitle, function () {
-				expect( t(ns+'date', {day: '13', year: 2014}, 2) ).to.equal( '13. February 2014' );
-			});
+    it('should return a translated string with the correct plural form (4)'+nsTitle, function () {
+      expect( t(ns+'hits', 4) ).to.equal( '4 Hits' );
+    });
 
-			it('should return a translated string with the correct plural form and replaced placeholders: t(key, count, replacements)'+nsTitle, function () {
-				expect( t(ns+'date', 2, {day: '13', year: 2014}) ).to.equal( '13. February 2014' );
-			});
+    it('should return a translated string with the correct plural form and replaced placeholders: t(key, replacements, count)'+nsTitle, function () {
+      expect( t(ns+'date', {day: '13', year: 2014}, 2) ).to.equal( '13. February 2014' );
+    });
 
-		});
+    it('should return a translated string with the correct plural form and replaced placeholders: t(key, count, replacements)'+nsTitle, function () {
+      expect( t(ns+'date', 2, {day: '13', year: 2014}) ).to.equal( '13. February 2014' );
+    });
+
+  });
 
 
 
-	it('should support arbitrarily deep namespaces', function() {
-		expect( t('namespaceA::icelandicSheep::13') ).to.equal( 'Baaahd luck!' );
-	});
+  it('should support arbitrarily deep namespaces', function() {
+    expect( t('namespaceA::icelandicSheep::13') ).to.equal( 'Baaahd luck!' );
+  });
 
 
   var placeholders = { name:'Alice' };
-	it('should handle combination of count and named placeholders', function () {
-		expect( t('comboCounter', 10, placeholders) ).to.equal( 'Alice is 10 years old.' );
-		expect( t('comboCounter', placeholders, 10) ).to.equal( 'Alice is 10 years old.' );
-	});
-	it('shouldn\'t modify the placeholder object', function () {
-		expect( 'n' in placeholders ).to.equal( false );
-	});
+  it('should handle combination of count and named placeholders', function () {
+    expect( t('comboCounter', 10, placeholders) ).to.equal( 'Alice is 10 years old.' );
+    expect( t('comboCounter', placeholders, 10) ).to.equal( 'Alice is 10 years old.' );
+  });
+  it('shouldn\'t modify the placeholder object', function () {
+    expect( 'n' in placeholders ).to.equal( false );
+  });
 
-	it('should first check the existence of a literal key before entering namespaces', function () {
-		expect( t('namespaceA::literalKey') ).to.equal( 'Literal' );
-	});
-	it('should prefer literal key over an existing namespaced key', function () {
-		expect( t('namespaceA::preferredKey') ).to.equal( 'Preferred' );
-	});
-
-
-	var nonStringTranslations = {
-		foo: 10,
-		bar: [],
-		baz: {},
-		heh: null,
-		ooh: true,
-		happensToBeString: 'OK'
-	};
-	var t0 = translate( nonStringTranslations );
-	it('should treat any non-string translations as missing', function () {
-		expect( t0('foo') ).to.equal( 'foo' );
-		expect( t0('bar') ).to.equal( 'bar' );
-		expect( t0('baz') ).to.equal( 'baz' );
-		expect( t0('heh') ).to.equal( 'heh' );
-		expect( t0('ooh') ).to.equal( 'ooh' );
-		expect( t0('happensToBeString') ).to.equal( 'OK' );
-	});
+  it('should first check the existence of a literal key before entering namespaces', function () {
+    expect( t('namespaceA::literalKey') ).to.equal( 'Literal' );
+  });
+  it('should prefer literal key over an existing namespaced key', function () {
+    expect( t('namespaceA::preferredKey') ).to.equal( 'Preferred' );
+  });
 
 
-	//every thing with namespace support + custom namespace splitter
+  var nonStringTranslations = {
+    foo: 10,
+    bar: [],
+    baz: {},
+    heh: null,
+    ooh: true,
+    happensToBeString: 'OK'
+  };
+  var t0 = translate( nonStringTranslations );
+  it('should treat any non-string translations as missing', function () {
+    expect( t0('foo') ).to.equal( 'foo' );
+    expect( t0('bar') ).to.equal( 'bar' );
+    expect( t0('baz') ).to.equal( 'baz' );
+    expect( t0('heh') ).to.equal( 'heh' );
+    expect( t0('ooh') ).to.equal( 'ooh' );
+    expect( t0('happensToBeString') ).to.equal( 'OK' );
+  });
 
-	var t1 = translate( translationsObject, {namespaceSplitter: new RegExp('\\.')} );
-	it('should return a translated string with the correct plural form and replaced placeholders: t(key, count, replacements) [namespace support + RegExp splitter]', function() {
-		expect( t1('namespaceA.date', 2, {day: '13', year: 2014}) ).to.equal( '13. February 2014' );
-	});
 
-	var t2 = translate( translationsObject, {namespaceSplitter: /\./} );
-	it('should return a translated string with the correct plural form and replaced placeholders: t(key, count, replacements) [namespace support + Inline RegExp splitter]', function() {
-		expect( t2('namespaceA.date', 2, {day: '13', year: 2014}) ).to.equal( '13. February 2014' );
-	});
+  //every thing with namespace support + custom namespace splitter
 
-	var t3 = translate( translationsObject, {namespaceSplitter: '.'} );
-	it('should return a translated string with the correct plural form and replaced placeholders: t(key, count, replacements) [namespace support + String splitter]', function() {
-		expect( t3('namespaceA.date', 2, {day: '13', year: 2014}) ).to.equal( '13. February 2014' );
-	});
+  var t1 = translate( translationsObject, {namespaceSplitter: new RegExp('\\.')} );
+  it('should return a translated string with the correct plural form and replaced placeholders: t(key, count, replacements) [namespace support + RegExp splitter]', function() {
+    expect( t1('namespaceA.date', 2, {day: '13', year: 2014}) ).to.equal( '13. February 2014' );
+  });
 
-	// custom isPlural function
-	var pluralize_IS = function ( n /*, tarnslationKey*/ ) {
+  var t2 = translate( translationsObject, {namespaceSplitter: /\./} );
+  it('should return a translated string with the correct plural form and replaced placeholders: t(key, count, replacements) [namespace support + Inline RegExp splitter]', function() {
+    expect( t2('namespaceA.date', 2, {day: '13', year: 2014}) ).to.equal( '13. February 2014' );
+  });
+
+  var t3 = translate( translationsObject, {namespaceSplitter: '.'} );
+  it('should return a translated string with the correct plural form and replaced placeholders: t(key, count, replacements) [namespace support + String splitter]', function() {
+    expect( t3('namespaceA.date', 2, {day: '13', year: 2014}) ).to.equal( '13. February 2014' );
+  });
+
+  // custom isPlural function
+  var pluralize_IS = function ( n /*, tarnslationKey*/ ) {
     // Icelandic rules: Numbers ending in 1 are singular - unless ending in 11.
-		return (n%10 !== 1 || n%100 === 11) ? 2 : 1;
-	};
-	var t3b = translate( translationsObject, { pluralize: pluralize_IS } );
-	['','namespaceA::'].forEach(function (ns) {
-			var nsTitle = ns ? ' [namespace support]' : '';
+    return (n%10 !== 1 || n%100 === 11) ? 2 : 1;
+  };
+  var t3b = translate( translationsObject, { pluralize: pluralize_IS } );
+  ['','namespaceA::'].forEach(function (ns) {
+    var nsTitle = ns ? ' [namespace support]' : '';
 
-			it('should pluralize (0) correctly in Icelandic'+nsTitle, function () {
-				expect( t3b(ns+'icelandicSheep', 0) ).to.equal( 'Engar kindur' );
-			});
-			it('should pluralize (1) correctly in Icelandic'+nsTitle, function () {
-				expect( t3b(ns+'icelandicSheep', 1) ).to.equal( '1 kind' );
-			});
-			it('should pluralize (2) correctly in Icelandic'+nsTitle, function () {
-				expect( t3b(ns+'icelandicSheep', 2) ).to.equal( '2 kindur' );
-			});
-			it('should pluralize (11) correctly in Icelandic'+nsTitle, function () {
-				expect( t3b(ns+'icelandicSheep', 11) ).to.equal( '11 kindur' );
-			});
-			it('should pluralize (21) correctly in Icelandic'+nsTitle, function () {
-				expect( t3b(ns+'icelandicSheep', 21) ).to.equal( '21 kind' );
-			});
-			it('should pluralize (29) correctly in Icelandic'+nsTitle, function () {
-				expect( t3b(ns+'icelandicSheep', 29) ).to.equal( '29 kindur' );
-			});
-			it('should return explicit pluralization property regardless of pluralization function'+nsTitle, function () {
-				expect( t5(ns+'icelandicSheep', 13) ).to.equal( 'Baaahd luck!' );
-			});
-			it('should automatically return correct pluralization for negative counts'+nsTitle, function () {
-				expect( t5(ns+'icelandicSheep', -13) ).to.equal( 'Baaahd luck!' );
-			});
-		});
+    it('should pluralize (0) correctly in Icelandic'+nsTitle, function () {
+      expect( t3b(ns+'icelandicSheep', 0) ).to.equal( 'Engar kindur' );
+    });
+    it('should pluralize (1) correctly in Icelandic'+nsTitle, function () {
+      expect( t3b(ns+'icelandicSheep', 1) ).to.equal( '1 kind' );
+    });
+    it('should pluralize (2) correctly in Icelandic'+nsTitle, function () {
+      expect( t3b(ns+'icelandicSheep', 2) ).to.equal( '2 kindur' );
+    });
+    it('should pluralize (11) correctly in Icelandic'+nsTitle, function () {
+      expect( t3b(ns+'icelandicSheep', 11) ).to.equal( '11 kindur' );
+    });
+    it('should pluralize (21) correctly in Icelandic'+nsTitle, function () {
+      expect( t3b(ns+'icelandicSheep', 21) ).to.equal( '21 kind' );
+    });
+    it('should pluralize (29) correctly in Icelandic'+nsTitle, function () {
+      expect( t3b(ns+'icelandicSheep', 29) ).to.equal( '29 kindur' );
+    });
+    it('should return explicit pluralization property regardless of pluralization function'+nsTitle, function () {
+      expect( t5(ns+'icelandicSheep', 13) ).to.equal( 'Baaahd luck!' );
+    });
+    it('should automatically return correct pluralization for negative counts'+nsTitle, function () {
+      expect( t5(ns+'icelandicSheep', -13) ).to.equal( 'Baaahd luck!' );
+    });
+  });
 
-	// wrong arguments
-	var t4 = translate( translationsObject, 'asd' );
-	it('should return a translated string with the correct plural form and replaced placeholders: t(key, count, replacements) [namespace support + wrong options arg]', function() {
-		expect( t4('namespaceA::date', 2, {day: '13', year: 2014}) ).to.equal( '13. February 2014' );
-	});
+  // wrong arguments
+  var t4 = translate( translationsObject, 'asd' );
+  it('should return a translated string with the correct plural form and replaced placeholders: t(key, count, replacements) [namespace support + wrong options arg]', function() {
+    expect( t4('namespaceA::date', 2, {day: '13', year: 2014}) ).to.equal( '13. February 2014' );
+  });
 
 
-	//debug enabled
-	var t5 = translate( translationsObject, {debug: true} );
-	it('should return @@translationKey@@ if no translation is found and debug is true', function() {
-		expect( t5('nonexistentkey') ).to.equal( '@@nonexistentkey@@' );
-	});
+  //debug enabled
+  var t5 = translate( translationsObject, {debug: true} );
+  it('should return @@translationKey@@ if no translation is found and debug is true', function() {
+    expect( t5('nonexistentkey') ).to.equal( '@@nonexistentkey@@' );
+  });
 
-	it('should return @@translationKey@@ if no translation is found [namespace support]', function() {
-		expect( t5('namespaceA::nonexistentkey') ).to.equal( '@@namespaceA::nonexistentkey@@' );
-	});
+  it('should return @@translationKey@@ if no translation is found [namespace support]', function() {
+    expect( t5('namespaceA::nonexistentkey') ).to.equal( '@@namespaceA::nonexistentkey@@' );
+  });
 
-	// it('should return ', function() {
-	// 	expect(t()).to.equal();
-	// });
+  // it('should return ', function() {
+  //  expect(t()).to.equal();
+  // });
 });
