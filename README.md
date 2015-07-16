@@ -50,6 +50,7 @@ First create a language specific object for your translations:
 var messages = {
     like: 'I like this.',
     likeThing: 'I like {thing}!',
+    like01: 'I like {0} and {1}!',
     simpleCounter: 'The count is {n}.',
     hits: {
         0: 'No Hits',
@@ -96,8 +97,10 @@ t('Prosa Key') => 'This is prosa!'
 //namespace support
 t('namespaceA::like') => 'I like this namespace.'
 
-//palceholders
+//palceholders - named
 t('likeThing', {thing: 'the Sun'}) => 'I like the Sun!'
+//palceholders - array
+t('like01', ['Alice', 'Bob']) => 'I like Alice and Bob!'
 
 //count
 t('simpleCounter', 25) => 'The count is 25'
