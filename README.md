@@ -133,6 +133,12 @@ t.keys.foo = { bar:'baz' }
 t('foo/bar'); => 'baz'
 ```
 
+Immutability can be achieved with a simple wrapper:
+
+```js
+var t2 = function () { return t.apply(null,arguments); };
+```
+
 
 ### Custom pluralization
 
