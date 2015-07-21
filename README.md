@@ -57,7 +57,7 @@ var messages = {
         1: '{n} Hit',
         2: '{n} Hitse',  //some slavic langs have multiple plural forms
         3: '{n} Hitses', //some slavic langs have multiple plural forms
-        n: '{n} Hits'
+        n: '{n} Hits' // default
     },
     date: {
         1: '{day}. January {year}',
@@ -122,14 +122,14 @@ You can also do customized pluralization like this:
 var messages_IS = {
     sheep: {
         0: 'Engar kindur',
-        1: '{n} kind',
-        2: '{n} kindur',
         13: 'Baaahd luck!'
+        s: '{n} kind',
+        p: '{n} kindur',
     }
 };
 var pluralize_IS = function ( n, tarnslationKey ) {
     // Icelandic rules: Numbers ending in 1 are singular - unless ending in 11.
-    return (n%10 !== 1 || n%100 === 11) ? 2 : 1;
+    return (n%10 !== 1 || n%100 === 11) ? 'p' : 's';
 };
 var t = translate( messages_IS, { pluralize:pluralize_IS });
 

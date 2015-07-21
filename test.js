@@ -15,13 +15,16 @@ describe('translate.js', function() {
       1: '{n} Hit',
       2: '{n} Hitse',  //some slavic langs have multiple plural forms
       3: '{n} Hitses', //some slavic langs have multiple plural forms
-      n: '{n} Hits'
+      n: '{n} Hits' // default
     },
     icelandicSheep: {
       0: 'Engar kindur',
-      1: '{n} kind', // some languages use singular for any number that ends with 1 (i.e. 101, 21, 31, 51)
-      n: '{n} kindur',
+      s: '{n} kind', // some languages use singular for any number that ends with 1 (i.e. 101, 21, 31, 51)
+      p: '{n} kindur',
       13: 'Baaahd luck!' // Aribtrary translation outside of pluralization rules
+    },
+    horses: {
+      n: 'Pluralization keys are missing' // default fallback
     },
     date: {
       1: '{day}. January {year}',
@@ -58,9 +61,12 @@ describe('translate.js', function() {
       },
       icelandicSheep: {
         0: 'Engar kindur',
-        1: '{n} kind', // some languages use singular for any number that ends with 1 (i.e. 101, 21, 31, 51)
-        n: '{n} kindur',
+        s: '{n} kind', // some languages use singular for any number that ends with 1 (i.e. 101, 21, 31, 51)
+        p: '{n} kindur',
         13: 'Baaahd luck!' // Aribtrary translation outside of pluralization rules
+      },
+      horses: {
+        n: 'Pluralization keys are missing' // default fallback
       },
       date: {
         1: '{day}. January {year}',
@@ -205,7 +211,7 @@ describe('translate.js', function() {
   // custom isPlural function
   var pluralize_IS = function ( n /*, tarnslationKey*/ ) {
     // Icelandic rules: Numbers ending in 1 are singular - unless ending in 11.
-    return (n%10 !== 1 || n%100 === 11) ? 2 : 1;
+    return (n%10 !== 1 || n%100 === 11) ? 'p' : 's';
   };
   var t3b = translate( translationsObject, { pluralize: pluralize_IS } );
   ['','namespaceA::'].forEach(function (ns) {
@@ -234,6 +240,9 @@ describe('translate.js', function() {
     });
     it('should automatically return correct pluralization for negative counts'+nsTitle, function () {
       expect( t5(ns+'icelandicSheep', -13) ).to.equal( 'Baaahd luck!' );
+    });
+    it('should default to the `n` key if some/all pluralization keys are missing'+nsTitle, function () {
+      expect( t5(ns+'horses', 7) ).to.equal( 'Pluralization keys are missing' );
     });
   });
 
