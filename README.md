@@ -111,8 +111,34 @@ t('hits', 99) => '99 Hits'
 
 //combined count and placeholders
 t('date', 2, {day: '13', year: 2014}) => '13. February 2014'
-
 ```
+
+It is flexible, so you can add/replace translations after the fact by modifying the `.keys` property, like so:
+
+```js
+t.keys['add-key'] = 'Sorry I am late!';
+t('add-key'); => 'Sorry I am late!'
+
+t.keys = { 'new-key': 'All is new!' };
+t('new-key'); => 'All is new!'
+t('add-key'); => 'add-key' (No longer translated)
+t('like') => 'like'        (No longer translated)
+```
+
+The translation options can similarily be changed or replaced via the `.opts` property.
+
+```js
+t.opts.namespaceSplitter = '/';
+t.keys.foo = { bar:'baz' }
+t('foo/bar'); => 'baz'
+```
+
+Immutability can be achieved with a simple wrapper:
+
+```js
+var t2 = function () { return t.apply(null,arguments); };
+```
+
 
 ### Custom pluralization
 
