@@ -47,16 +47,19 @@ module.exports = function(messageObject, options) {
   function getTranslationValue(translationKey) {
     var transValue = tFunc.keys[translationKey];
     if( transValue == null ) {
-      var path = translationKey.split( tFunc.opts && tFunc.opts.namespaceSplitter || '::' );
-      if ( path.length > 1 ) {
-        var i = 0;
-        var len = path.length;
+      var path = translationKey.split( (tFunc.opts && tFunc.opts.namespaceSplitter) || '::' );
+      var i = 0;
+      var len = path.length;
+      if ( len > 1 )
+      {
+        // Start walking
         transValue = tFunc.keys;
         while ( len > i ) {
-          transValue = transValue[ path[i++]||'' ];
+          transValue = transValue[ path[i] || '' ];
           if ( transValue == null ) {
             break;
           }
+          i++;
         }
       }
     }
