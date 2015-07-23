@@ -104,30 +104,34 @@ module.exports = function(messageObject, options) {
   }
 
   var tFunc = function (translationKey, count, replacements) {
-    if ( isObject(count) ) {
-      var tmp = replacements;
-      replacements = count;
-      count = tmp;
-    }
-    replacements = replacements || {};
-    count = typeof count === 'number' ? count : null;
-
     var translation = getTranslationValue(translationKey);
+    var complex = arguments.length > 1;
 
-    if ( count != null && isObject(translation) ) {
-      //get appropriate plural translation string
-      translation = getPluralValue(translation, count);
+    if ( complex )
+    {
+      if ( isObject(count) ) {
+        var tmp = replacements;
+        replacements = count;
+        count = tmp;
+      }
+      replacements = replacements || {};
+      count = typeof count === 'number' ? count : null;
+
+
+      if ( count != null && isObject(translation) ) {
+        //get appropriate plural translation string
+        translation = getPluralValue(translation, count);
+      }
     }
-    if ( typeof translation === 'string' ) {
-      //replace {placeholders}
-      translation = replacePlaceholders(translation, replacements, count);
-    } else {
-      translation = translationKey;
 
+    if ( typeof translation !== 'string' ) {
+      translation = translationKey;
       if (debug) {
           translation = '@@' + translation + '@@';
           console.warn('Translation for "' + translationKey + '" not found.');
       }
+    } else if ( complex || debug ) {
+      translation = replacePlaceholders(translation, replacements, count);
     }
 
     return translation;
