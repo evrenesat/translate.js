@@ -105,7 +105,7 @@
 
     var tFunc = function (translationKey, count, replacements) {
       var translation = getTranslationValue(translationKey);
-      var complex = arguments.length > 1;
+      var complex = count!==undefined || replacements!==undefined;
 
       if ( complex )
       {
@@ -116,7 +116,6 @@
         }
         replacements = replacements || {};
         count = typeof count === 'number' ? count : null;
-
 
         if ( count != null && isObject(translation) ) {
           //get appropriate plural translation string
