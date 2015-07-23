@@ -120,7 +120,7 @@
         var test = tests[testIndex++];
         if ( test )
         {
-          out.innerHTML += test.name + ':\n\n';
+          out.innerHTML += test.name + ':\n';
           var suite = new Benchmark.Suite;
           for (var version in T)
           {
@@ -131,11 +131,11 @@
           }
           suite
               .on('cycle', function(e) {
-                  ;;;window.console&&console.log( e,this );
-                  out.innerHTML += '  * ' + e.target + '\n';
+                  out.innerHTML += '  * ' + e.target.toString().split('±')[0].replace(' x ',':   ') + '\n';
                 })
               .on('complete', function() {
-                  out.innerHTML += '\n  Fastest: ' + this.filter('fastest').pluck('name') + '\n\n';
+                  // out.innerHTML += '\n  Fastest: ' + this.filter('fastest').pluck('name') + '\n';
+                  out.innerHTML += '\n';
                   out.innerHTML += '--------------------------------------------\n';
                   runNext();
                 })
