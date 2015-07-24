@@ -90,25 +90,26 @@
 
 
     var replCache = {};
-    var compile = function (bits) {
-      var len = bits.length;
+
+    var compile = function (parts) {
+      var len = parts.length;
       return function (replacements,count) {
         var result = '';
         var isText = true;
         var i = 0;
         while ( i < len ) {
-          var bit = bits[i];
+          var part = parts[i];
           if ( isText ) {
-            result += bit;
+            result += part;
           } else {
-            var val = replacements[bit];
+            var val = replacements[part];
             if ( val === undefined )
             {
-              if ( bit==='n'  &&  count != null ) {
+              if ( part==='n'  &&  count != null ) {
                 val = count;
               } else {
-                debug && console.warn('No "' + bit + '" in placeholder object:', replacements);
-                val = '{'+bit+'}';
+                debug && console.warn('No "' + part + '" in placeholder object:', replacements);
+                val = '{'+part+'}';
               }
             }
             result += val;
@@ -123,8 +124,19 @@
     function replacePlaceholders(translation, replacements, count) {
       var result = replCache[translation];
       if ( result === undefined ) {
-        var bits = translation.replace(/\{(\w+)\}/g, '{x}$1{x}').split('{x}'); // stupid but works
-        result = replCache[translation] = bits.length > 1 ? compile(bits) : bits[0];
+        var parts = translation
+                        // turn both curly braces around tokens into the a unified
+                        // (and now unique/safe) token `{x}` signifying boundry between
+                        // replacement variables and static text.
+                        .replace(/\{(\w+)\}/g, '{x}$1{x}')
+                        // Adjacent placeholders will always have an empty string between them.
+                        // The array will also always start with a static string (at least a '').
+                        .split('{x}'); // stupid but works™
+        // NOTE: parts no consists of alternating [text,replacement,text,replacement,text]
+        // Cache a function that loops over the parts array - unless there's only text
+        // (i.e. parts.length === 1) - then we simply cache the string.
+        result = parts.length > 1 ? compile(parts) : parts[0];
+        replCache[translation] = result;
       }
       result = result.apply ? result(replacements, count) : result;
       return result;
