@@ -52,15 +52,21 @@
             'c': 'Dolor',
             'd': 'Sit',
           },
-        keyed: {
+        singleKeyed: {
             'a': 'Lor {0} em',
-            'b': 'Ipsum {0}, {1} ',
+            'b': 'Ipsum {1} dolor ',
+            'c': '{2} Dolor',
+            'd': 'S {0} it ',
+          },
+        multiKeyed: {
+            'a': '{2} Lor {0} em {1}',
+            'b': 'Ipsum {0}, {1} {2} ',
             'c': '{0} Dolor {1}, {2} ',
             'd': 'S {0} i {1} t {2} ',
           }
       }
-    var replacements = { '0':'Lorem',  '1':'ipsum', '2':'dolor' };
-    var replacementsArr = ['Lorem','ipsum','dolor'];
+    // var replacements = { '0':'Lorem',  '1':'ipsum', '2':'dolor' };
+    var replacements = ['Lorem','ipsum','dolor'];
     var count = 0;
     var count1 = 1;
     var countP = 2;
@@ -69,48 +75,57 @@
     var isPlural = function ( n ) { return n!=1 ? 'p' : 's'; };
 
 
+    var testFn = {
+        simple: function ( t, txts ) {
+            return function(){
+                for (var key in txts)
+                {
+                  t(key);
+                  t(key);
+                  t(key);
+                  t(key);
+                }
+              };
+          },
+        replacement: function ( t, txts ) {
+            return function(){
+                for (var key in txts)
+                {
+                  t(key, replacements);
+                  t(key, replacements);
+                  t(key, replacements);
+                  t(key, replacements);
+                }
+              };
+          }
+    }
+
+
     var tests = [
         {
           name: 'Vanilla keys',
           texts: textObj.vanilla, // or self-running function;
           // opts: undefined,
-          fn: function ( t, txts ) {
-              return function(){
-                  for (var key in txts)
-                  {
-                    t(key);
-                    t(key);
-                  }
-                };
-            }
+          fn: testFn.simple,
         },
         {
           name: 'Vanilla keys - unnecessary options',
           texts: textObj.vanilla, // or self-running function;
           // opts: undefined,
-          fn: function ( t, txts ) {
-              return function(){
-                  for (var key in txts)
-                  {
-                    t(key, replacements);
-                    t(key, replacementsArr);
-                  }
-                };
-            }
+          fn: testFn.replacement,
         },
         {
-          name: 'Replacement keys',
-          texts: textObj.keyed, // or self-running function;
+          //disabled: true,
+          name: 'Replacement single keys',
+          texts: textObj.singleKeyed, // or self-running function;
           // opts: undefined,
-          fn: function ( t, txts ) {
-              return function(){
-                  for (var key in txts)
-                  {
-                    t(key, replacements);
-                    t(key, replacements);
-                  }
-                };
-            }
+          fn: testFn.replacement,
+        },
+        {
+          name: 'Replacement multiple keys',
+          texts: textObj.multiKeyed, // or self-running function;
+          // opts: undefined,
+          fn: testFn.replacement,
         },
       ];
 
