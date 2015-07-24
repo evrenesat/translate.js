@@ -94,9 +94,9 @@
     var compile = function (parts) {
       var len = parts.length;
       return function (replacements,count) {
-        var result = '';
-        var isText = true;
-        var i = 0;
+        var result = parts[0];
+        var isText = false;
+        var i = 1;
         while ( i < len ) {
           var part = parts[i];
           if ( isText ) {
