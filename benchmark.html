@@ -103,12 +103,14 @@
 
     var tests = [
         {
+          //disabled: true,
           name: 'Vanilla keys',
           texts: textObj.vanilla, // or self-running function;
           // opts: undefined,
           fn: testFn.simple,
         },
         {
+          //disabled: true,
           name: 'Vanilla keys - unnecessary options',
           texts: textObj.vanilla, // or self-running function;
           // opts: undefined,
@@ -122,6 +124,7 @@
           fn: testFn.replacement,
         },
         {
+          //disabled: true,
           name: 'Replacement multiple keys',
           texts: textObj.multiKeyed, // or self-running function;
           // opts: undefined,
@@ -135,6 +138,8 @@
         var test = tests[testIndex++];
         if ( test )
         {
+          if (test.disabled) { setTimeout(runNext, 0); return; }
+
           out.innerHTML += test.name + ':\n';
           var suite = new Benchmark.Suite;
           for (var version in T)
