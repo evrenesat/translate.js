@@ -88,19 +88,46 @@
       return translation;
     }
 
-    function replacePlaceholders(translation, replacements, count) {
-      return translation.replace(/\{(\w*)\}/g, function (match, key) {
-        var val = replacements[key];
-        if (!replacements.hasOwnProperty(key)) {
-          if ( key === 'n' || count != null) {
-            val = count;
+
+    var replCache = {};
+    var compile = function (bits) {
+      var len = bits.length;
+      return function (replacements,count) {
+        var result = '';
+        var isText = true;
+        var i = 0;
+        while ( i < len ) {
+          var bit = bits[i];
+          if ( isText ) {
+            result += bit;
           } else {
-            debug && console.warn('No "' + key + '" in placeholder object:', replacements);
-            val = match;
+            var val = replacements[bit];
+            if ( val === undefined )
+            {
+              if ( bit==='n'  &&  count != null ) {
+                val = count;
+              } else {
+                debug && console.warn('No "' + bit + '" in placeholder object:', replacements);
+                val = '{'+bit+'}';
+              }
+            }
+            result += val;
           }
+          isText = !isText;
+          i++;
         }
-        return val;
-      });
+        return result;
+      };
+    };
+
+    function replacePlaceholders(translation, replacements, count) {
+      var result = replCache[translation];
+      if ( result === undefined ) {
+        var bits = translation.replace(/\{(\w+)\}/g, '{x}$1{x}').split('{x}'); // stupid but works
+        result = replCache[translation] = bits.length > 1 ? compile(bits) : bits[0];
+      }
+      result = result.apply ? result(replacements, count) : result;
+      return result;
     }
 
     var tFunc = function (translationKey, count, replacements) {
