@@ -350,6 +350,18 @@ describe('translate.js', function() {
   });
 
 
+
+  it('should handle adjacent placeholders', function () {
+    var t = translate({ test:'{foo}{bar}' })
+    expect( t('test', { foo:'Hello', bar:'World'}) ).to.equal( 'HelloWorld' );
+  });
+  it('should handle the placeholder tokens used internally by `replacePlaceholders()`', function () {
+    var t = translate({ test:'{x}' })
+    expect( t('test', { x:'HelloWorld' }) ).to.equal( 'HelloWorld' );
+  });
+
+
+
   // it('should return ', function() {
   //  expect(t()).to.equal();
   // });

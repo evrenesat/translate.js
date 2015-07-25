@@ -88,24 +88,63 @@
       return translation;
     }
 
-    function replacePlaceholders(translation, replacements, count) {
-      return translation.replace(/\{(\w*)\}/g, function (match, key) {
-        var val = replacements[key];
-        if (!replacements.hasOwnProperty(key)) {
-          if ( key === 'n' || count != null) {
-            val = count;
+
+    var replCache = {};
+
+    var compile = function (parts) {
+      var len = parts.length;
+      return function (replacements,count) {
+        var result = parts[0];
+        var isText = false;
+        var i = 1;
+        while ( i < len ) {
+          var part = parts[i];
+          if ( isText ) {
+            result += part;
           } else {
-            debug && console.warn('No "' + key + '" in placeholder object:', replacements);
-            val = match;
+            var val = replacements[part];
+            if ( val === undefined )
+            {
+              if ( part==='n'  &&  count != null ) {
+                val = count;
+              } else {
+                debug && console.warn('No "' + part + '" in placeholder object:', replacements);
+                val = '{'+part+'}';
+              }
+            }
+            result += val;
           }
+          isText = !isText;
+          i++;
         }
-        return val;
-      });
+        return result;
+      };
+    };
+
+    function replacePlaceholders(translation, replacements, count) {
+      var result = replCache[translation];
+      if ( result === undefined ) {
+        var parts = translation
+                        // turn both curly braces around tokens into the a unified
+                        // (and now unique/safe) token `{x}` signifying boundry between
+                        // replacement variables and static text.
+                        .replace(/\{(\w+)\}/g, '{x}$1{x}')
+                        // Adjacent placeholders will always have an empty string between them.
+                        // The array will also always start with a static string (at least a '').
+                        .split('{x}'); // stupid but works™
+        // NOTE: parts no consists of alternating [text,replacement,text,replacement,text]
+        // Cache a function that loops over the parts array - unless there's only text
+        // (i.e. parts.length === 1) - then we simply cache the string.
+        result = parts.length > 1 ? compile(parts) : parts[0];
+        replCache[translation] = result;
+      }
+      result = result.apply ? result(replacements, count) : result;
+      return result;
     }
 
     var tFunc = function (translationKey, count, replacements) {
       var translation = getTranslationValue(translationKey);
-      var complex = arguments.length > 1;
+      var complex = count!==undefined || replacements!==undefined;
 
       if ( complex )
       {
@@ -116,7 +155,6 @@
         }
         replacements = replacements || {};
         count = typeof count === 'number' ? count : null;
-
 
         if ( count != null && isObject(translation) ) {
           //get appropriate plural translation string

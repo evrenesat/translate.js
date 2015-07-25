@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+
+  <title>Translate.js Benchmark Testing</title>
+
+</head>
+<body>
+
+  <h1>Translate.js Benchmark Testing</h1>
+
+  <h2>Test Results:</h2>
+  <pre id="out">...nothing is happening...</pre>
+
+
+  <script src="node_modules/benchmark/benchmark.js"></script>
+
+  <script>window.T = {};</script>
+  <script>window.module = {}; // to capture module.exports from older versions of translate.js...</script>
+
+  <script src="https://rawgithub.com/StephanHoyer/translate.js/0b14fd884a8305dd93c52f4014d1eacd4ec21505/index.js"></script>
+  <script>T['Version 0.1.0'] = module.exports;</script>
+
+  <script src="https://rawgithub.com/StephanHoyer/translate.js/b47c4546353fbe38b8e448bcd743c4ef353427c4/index.js"></script>
+  <script>T['Exposed Internals'] = module.exports;</script>
+
+  <script src="https://rawgithub.com/StephanHoyer/translate.js/f6a0e9c41c66bcb81c9b7d2067d7fdcedba4e130/index.js"></script>
+  <script>T['Speed-up simple strings'] = module.exports;</script>
+
+  <script>window.module = undefined;</script>
+
+
+  <script src="https://rawgithub.com/StephanHoyer/translate.js/master/index.js"></script>
+  <script>T['Current Master'] = translatejs;</script>
+
+  <script src="https://rawgithub.com/StephanHoyer/translate.js/6ec38a533ccc2f806a70958a6a3b804723e6109a/index.js"></script>
+  <script>T['No arguments.length'] = translatejs;</script>
+
+  <script src="https://rawgithub.com/StephanHoyer/translate.js/8715fddac8b886403923ce9cea4be0ccb048dbf6/index.js"></script>
+  <script>T['Compiled replace'] = translatejs;</script>
+
+  <script src="index.js"></script>
+  <script>T['Local file'] = translatejs;</script>
+
+
+  <script>
+    window.translatejs = undefined;
+    var out = document.getElementById('out');
+    out.innerHTML = '--------------------------------------------\n';
+
+    var textObj = {
+        vanilla: {
+            'a': 'Lorem',
+            'b': 'Ipsum',
+            'c': 'Dolor',
+            'd': 'Sit',
+          },
+        singleKeyed: {
+            'a': 'Lor {0} em',
+            'b': 'Ipsum {1} dolor ',
+            'c': '{2} Dolor',
+            'd': 'S {0} it ',
+          },
+        multiKeyed: {
+            'a': '{2} Lor {0} em {1}',
+            'b': 'Ipsum {0}, {1} {2} ',
+            'c': '{0} Dolor {1}, {2} ',
+            'd': 'S {0} i {1} t {2} ',
+          },
+      }
+    // var replacements = { '0':'Lorem',  '1':'ipsum', '2':'dolor' };
+    var replacements = ['Lorem','ipsum','dolor'];
+    var count = 0;
+    var count1 = 1;
+    var countP = 2;
+    var countN = 99;
+
+    var isPlural = function ( n ) { return n!=1 ? 'p' : 's'; };
+
+
+    var testFn = {
+        simple: function ( t, txts ) {
+            return function(){
+                for (var key in txts)
+                {
+                  t(key);
+                  t(key);
+                  t(key);
+                  t(key);
+                }
+              };
+          },
+        replacement: function ( t, txts ) {
+            return function(){
+                for (var key in txts)
+                {
+                  t(key, replacements);
+                  t(key, replacements);
+                  t(key, replacements);
+                  t(key, replacements);
+                }
+              };
+          }
+    }
+
+
+    var tests = [
+        {
+          //disabled: true,
+          name: 'Vanilla keys',
+          texts: textObj.vanilla, // or self-running function;
+          // opts: undefined,
+          fn: testFn.simple,
+        },
+        {
+          //disabled: true,
+          name: 'Vanilla keys - unnecessary options',
+          texts: textObj.vanilla, // or self-running function;
+          // opts: undefined,
+          fn: testFn.replacement,
+        },
+        {
+          //disabled: true,
+          name: 'Replacement single keys',
+          texts: textObj.singleKeyed, // or self-running function;
+          // opts: undefined,
+          fn: testFn.replacement,
+        },
+        {
+          //disabled: true,
+          name: 'Replacement multiple keys',
+          texts: textObj.multiKeyed, // or self-running function;
+          // opts: undefined,
+          fn: testFn.replacement,
+        },
+      ];
+
+
+    var testIndex = 0;
+    var runNext = function () {
+        var test = tests[testIndex++];
+        if ( test )
+        {
+          if (test.disabled) { setTimeout(runNext, 0); return; }
+
+          out.innerHTML += test.name + ':\n';
+          var suite = new Benchmark.Suite;
+          for (var version in T)
+          {
+            suite.add(
+                version,
+                test.fn( T[version]( test.texts, test.opts ), test.texts )
+              );
+          }
+          suite
+              .on('cycle', function(e) {
+                  out.innerHTML += '  * ' + e.target.toString().split('±')[0].replace(' x ',':   ') + '\n';
+                })
+              .on('complete', function() {
+                  // out.innerHTML += '\n  Fastest: ' + this.filter('fastest').pluck('name') + '\n';
+                  out.innerHTML += '\n';
+                  out.innerHTML += '--------------------------------------------\n';
+                  runNext();
+                })
+              // run
+              .run({ 'async': true });
+        }
+      };
+
+    runNext();
+  </script>
+
+</body>
+</html>
