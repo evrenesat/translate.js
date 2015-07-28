@@ -91,34 +91,32 @@
 
     var replCache = {};
 
-    var compile = function (parts) {
+    var assemble = function (parts, replacements, count) {
+      var result = parts[0];
+      var isText = false;
+      var i = 1;
       var len = parts.length;
-      return function (replacements,count) {
-        var result = parts[0];
-        var isText = false;
-        var i = 1;
-        while ( i < len ) {
-          var part = parts[i];
-          if ( isText ) {
-            result += part;
-          } else {
-            var val = replacements[part];
-            if ( val === undefined )
-            {
-              if ( part==='n'  &&  count != null ) {
-                val = count;
-              } else {
-                debug && console.warn('No "' + part + '" in placeholder object:', replacements);
-                val = '{'+part+'}';
-              }
+      while ( i < len ) {
+        var part = parts[i];
+        if ( isText ) {
+          result += part;
+        } else {
+          var val = replacements[part];
+          if ( val === undefined )
+          {
+            if ( part==='n'  &&  count != null ) {
+              val = count;
+            } else {
+              debug && console.warn('No "' + part + '" in placeholder object:', replacements);
+              val = '{'+part+'}';
             }
-            result += val;
           }
-          isText = !isText;
-          i++;
+          result += val;
         }
-        return result;
-      };
+        isText = !isText;
+        i++;
+      }
+      return result;
     };
 
     function replacePlaceholders(translation, replacements, count) {
@@ -135,10 +133,10 @@
         // NOTE: parts no consists of alternating [text,replacement,text,replacement,text]
         // Cache a function that loops over the parts array - unless there's only text
         // (i.e. parts.length === 1) - then we simply cache the string.
-        result = parts.length > 1 ? compile(parts) : parts[0];
+        result = parts.length > 1 ? parts : parts[0];
         replCache[translation] = result;
       }
-      result = result.apply ? result(replacements, count) : result;
+      result = result.pop ? assemble(result, replacements, count) : result;
       return result;
     }
 
