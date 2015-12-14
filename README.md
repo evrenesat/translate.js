@@ -1,5 +1,6 @@
 [![Build Status](https://travis-ci.org/StephanHoyer/translate.js.svg)](https://travis-ci.org/StephanHoyer/translate.js)
-
+[![Dependency Status](https://david-dm.org/stephanhoyer/translate.js.svg)](https://david-dm.org/stephanhoyer/translate.js)
+[![devDependency Status](https://david-dm.org/stephanhoyer/translate.js/dev-status.svg)](https://david-dm.org/stephanhoyer/translate.js#info=devDependencies)
 translate.js
 ============
 
