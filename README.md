@@ -29,7 +29,6 @@ var messages = {
 var options = {
     // These are the defaults:
     debug: false, //[Boolean]: Logs missing translations to console and add "@@" around output if `true`.
-    namespaceSplitter: '::',  // [String|RegExp]: Customizes the translationKey namespace splitter.
     pluralize: function(n,translKey){ return Math.abs(n); }  //[Function(count,translationKey)]: Provides a custom pluralization mapping function.
 };
 
@@ -40,7 +39,6 @@ t('translationKey', count);
 t('translationKey', {replaceKey: 'replacevalue'});
 t('translationKey', count, {replaceKey: 'replacevalue'});
 t('translationKey', {replaceKey: 'replacevalue'}, count);
-t('moduleA::translationKey');
 
 ```
 
@@ -79,9 +77,6 @@ var messages = {
 
     'Prosa Key': 'This is prosa!',  
 
-    namespaceA: {
-        like: 'I like this namespace.',
-    }
 }
 ```
 
@@ -96,9 +91,6 @@ And use it like this:
 //simple
 t('like') => 'I like this.'
 t('Prosa Key') => 'This is prosa!'
-
-//namespace support
-t('namespaceA::like') => 'I like this namespace.'
 
 //palceholders - named
 t('likeThing', {thing: 'the Sun'}) => 'I like the Sun!'
@@ -131,7 +123,6 @@ t('like') => 'like'        (No longer translated)
 The translation options can similarily be changed or replaced via the `.opts` property.
 
 ```js
-t.opts.namespaceSplitter = '/';
 t.keys.foo = { bar:'baz' }
 t('foo/bar'); => 'baz'
 ```
@@ -178,29 +169,8 @@ var t = translate( messages_IS, { pluralize:pluralize_IS  });
 
 Here's a large list of [pluralization algorithms by language](http://docs.translatehouse.org/projects/localization-guide/en/latest/l10n/pluralforms.html?id=l10n/pluralforms).
 
-## namespace-Support
 
-Namespace support was dropped in version 0.3.0 since it can easily be
-accomplished without
 
-With namespace support (old):
-```
-messages = {
-  namespaceA: {
-    foo: 'bar'
-  }
-}
+## Namespace-Support
 
-t('namespaceA::foo');
-```
-
-Without namespace support (new):
-```
-messages = {
-  'namespaceA::foo': 'bar'
-}
-
-t('namespaceA::foo');
-```
-
-If you really need it, use version 0.2.2.
+Namespace support was dropped in version 0.3.0. If you need it, use [version 0.2.2](https://github.com/StephanHoyer/translate.js/tree/v0.2.2).

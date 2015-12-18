@@ -24,7 +24,6 @@
  * t('translationKey', {replaceKey: 'replacevalue'})
  * t('translationKey', count, {replaceKey: 'replacevalue'})
  * t('translationKey', {replaceKey: 'replacevalue'}, count)
- * t('moduleA::translationKey')
  *
  *
  * @author Jonas Girnatis <dermusterknabe@gmail.com>
