@@ -177,3 +177,30 @@ var t = translate( messages_IS, { pluralize:pluralize_IS  });
 ```
 
 Here's a large list of [pluralization algorithms by language](http://docs.translatehouse.org/projects/localization-guide/en/latest/l10n/pluralforms.html?id=l10n/pluralforms).
+
+## namespace-Support
+
+Namespace support was dropped in version 0.3.0 since it can easily be
+accomplished without
+
+With namespace support (old):
+```
+messages = {
+  namespaceA: {
+    foo: 'bar'
+  }
+}
+
+t('namespaceA::foo');
+```
+
+Without namespace support (new):
+```
+messages = {
+  'namespaceA::foo': 'bar'
+}
+
+t('namespaceA::foo');
+```
+
+If you really need it, use version 0.2.2.
