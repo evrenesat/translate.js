@@ -43,7 +43,7 @@ describe('translate.js', function() {
 
     'Prosa Key': 'This is prosa!',
 
-    comboCounter: '{name} is {n} years old.',
+    'comboCounter': '{name} is {n} years old.',
   };
 
   var t = translate( translationsObject );

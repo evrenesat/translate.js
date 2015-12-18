@@ -23,7 +23,7 @@ Usage:
 var translate = require('translate.js');
 
 var messages = {
-  translationKey: 'translationValue'
+  translationKey: 'Translation value'
 };
 
 var options = {
@@ -151,7 +151,7 @@ var pluralize_IS = function ( n, tarnslationKey ) {
     // Icelandic rules: Numbers ending in 1 are singular - unless ending in 11.
     return (n%10 !== 1 || n%100 === 11) ? 'p' : 's';
 };
-var t = translate( messages_IS, { pluralize:pluralize_IS });
+var t = translate( messages_IS, { pluralize: pluralize_IS });
 
 t('sheep', 0) => 'Engar kindur'
 t('sheep', 1) => '1 kind'
