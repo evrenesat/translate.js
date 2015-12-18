@@ -31,135 +31,130 @@
  */
 
 /* global console, module */
-(function(){
-  'use strict';
+;(function () {
+  'use strict'
 
-  var isObject = function(obj) {
-    return obj  &&  typeof obj === 'object';
-  };
+  var isObject = function (obj) {
+    return obj && typeof obj === 'object'
+  }
 
-  var translatejs = function(messageObject, options) {
+  var translatejs = function (messageObject, options) {
+    var debug = options && options.debug
 
-    var debug = options && options.debug;
-
-    function getPluralValue(translation, count) {
+    function getPluralValue (translation, count) {
       // Opinionated assumption: Pluralization rules are the same for negative and positive values.
       // By normalizing all values to positive, pluralization functions become simpler, and less error-prone by accident.
-      var mappedCount = Math.abs(count);
+      var mappedCount = Math.abs(count)
 
-      if(translation[mappedCount] !== undefined){
-        translation = translation[mappedCount];
+      if (translation[mappedCount] != null) {
+        translation = translation[mappedCount]
       } else {
-        var plFunc = (tFunc.opts||{}).pluralize;
-        mappedCount = plFunc ? plFunc( mappedCount, translation ) : mappedCount;
-        if(translation[mappedCount] !== undefined){
-          translation = translation[mappedCount];
-        } else if(translation.n !== undefined) {
-          translation = translation.n;
+        var plFunc = (tFunc.opts || {}).pluralize
+        mappedCount = plFunc ? plFunc(mappedCount, translation) : mappedCount
+        if (translation[mappedCount] != null) {
+          translation = translation[mappedCount]
+        } else if (translation.n != null) {
+          translation = translation.n
         } else {
-          debug && console.warn('No plural forms found for "' + count + '" in', translation);
+          debug && console.warn('No plural forms found for "' + count + '" in', translation)
         }
       }
-      return translation;
+      return translation
     }
 
-
-    var replCache = {};
+    var replCache = {}
 
     var assemble = function (parts, replacements, count) {
-      var result = parts[0];
-      var isText = false;
-      var i = 1;
-      var len = parts.length;
-      while ( i < len ) {
-        var part = parts[i];
-        if ( isText ) {
-          result += part;
+      var result = parts[0]
+      var isText = false
+      var i = 1
+      var len = parts.length
+      while (i < len) {
+        var part = parts[i]
+        if (isText) {
+          result += part
         } else {
-          var val = replacements[part];
-          if ( val === undefined )
-          {
-            if ( part==='n'  &&  count != null ) {
-              val = count;
+          var val = replacements[part]
+          if (val == null) {
+            if (part === 'n' && count != null) {
+              val = count
             } else {
-              debug && console.warn('No "' + part + '" in placeholder object:', replacements);
-              val = '{'+part+'}';
+              debug && console.warn('No "' + part + '" in placeholder object:', replacements)
+              val = '{' + part + '}'
             }
           }
-          result += val;
+          result += val
         }
-        isText = !isText;
-        i++;
+        isText = !isText
+        i++
       }
-      return result;
-    };
+      return result
+    }
 
-    function replacePlaceholders(translation, replacements, count) {
-      var result = replCache[translation];
-      if ( result === undefined ) {
+    function replacePlaceholders (translation, replacements, count) {
+      var result = replCache[translation]
+      if (result == null) {
         var parts = translation
-                        // turn both curly braces around tokens into the a unified
-                        // (and now unique/safe) token `{x}` signifying boundry between
-                        // replacement variables and static text.
-                        .replace(/\{(\w+)\}/g, '{x}$1{x}')
-                        // Adjacent placeholders will always have an empty string between them.
-                        // The array will also always start with a static string (at least a '').
-                        .split('{x}'); // stupid but works™
+          // turn both curly braces around tokens into the a unified
+          // (and now unique/safe) token `{x}` signifying boundry between
+          // replacement variables and static text.
+          .replace(/\{(\w+)\}/g, '{x}$1{x}')
+          // Adjacent placeholders will always have an empty string between them.
+          // The array will also always start with a static string (at least a '').
+          .split('{x}') // stupid but works™
+
         // NOTE: parts no consists of alternating [text,replacement,text,replacement,text]
         // Cache a function that loops over the parts array - unless there's only text
         // (i.e. parts.length === 1) - then we simply cache the string.
-        result = parts.length > 1 ? parts : parts[0];
-        replCache[translation] = result;
+        result = parts.length > 1 ? parts : parts[0]
+        replCache[translation] = result
       }
-      result = result.pop ? assemble(result, replacements, count) : result;
-      return result;
+      result = result.pop ? assemble(result, replacements, count) : result
+      return result
     }
 
     var tFunc = function (translationKey, count, replacements) {
-      var translation = tFunc.keys[translationKey];
-      var complex = count !== undefined || replacements !== undefined;
+      var translation = tFunc.keys[translationKey]
+      var complex = count != null || replacements != null
 
-      if ( complex )
-      {
-        if ( isObject(count) ) {
-          var tmp = replacements;
-          replacements = count;
-          count = tmp;
+      if (complex) {
+        if (isObject(count)) {
+          var tmp = replacements
+          replacements = count
+          count = tmp
         }
-        replacements = replacements || {};
-        count = typeof count === 'number' ? count : null;
+        replacements = replacements || {}
+        count = typeof count === 'number' ? count : null
 
-        if ( count !== null && isObject(translation) ) {
-          //get appropriate plural translation string
-          translation = getPluralValue(translation, count);
+        if (count !== null && isObject(translation)) {
+          // get appropriate plural translation string
+          translation = getPluralValue(translation, count)
         }
       }
 
-      if ( typeof translation !== 'string' ) {
-        translation = translationKey;
+      if (typeof translation !== 'string') {
+        translation = translationKey
         if (debug) {
-            translation = '@@' + translation + '@@';
-            console.warn('Translation for "' + translationKey + '" not found.');
+          translation = '@@' + translation + '@@'
+          console.warn('Translation for "' + translationKey + '" not found.')
         }
-      } else if ( complex || debug ) {
-        translation = replacePlaceholders(translation, replacements, count);
+      } else if (complex || debug) {
+        translation = replacePlaceholders(translation, replacements, count)
       }
 
-      return translation;
-    };
+      return translation
+    }
 
-    tFunc.keys = messageObject || {};
-    tFunc.opts = options || {};
+    tFunc.keys = messageObject || {}
+    tFunc.opts = options || {}
 
-
-    return tFunc;
-  };
-
-
-  if ( typeof module !== 'undefined' && module.exports ) {
-    module.exports = translatejs;
-  } else {
-    window.translatejs = translatejs;
+    return tFunc
   }
 
-})();
+  if (typeof module !== 'undefined' && module.exports) {
+    module.exports = translatejs
+  } else {
+    window.translatejs = translatejs
+  }
+})()
+
