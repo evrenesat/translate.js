@@ -3,7 +3,7 @@
   "version": "0.3.0",
   "description": "Javascript micro library for translations (i18n) with support for placeholders and multiple plural forms.",
   "devDependencies": {
-    "benchmark": "^1.0.0",
+    "benchmark": "^2.0.0",
     "expect.js": "^0.3.1",
     "mocha": "^2.3.4"
   },
