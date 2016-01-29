@@ -5,10 +5,7 @@
  *
  * Usage:
  * var messages = {
- *  translationKey: 'translationValue',
- *  moduleA: {
- *    translationKey: 'value123'
- *  }
+ *  translationKey: 'translationValue'
  * }
  *
  * var options = {
