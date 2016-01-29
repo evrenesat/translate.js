@@ -38,6 +38,27 @@
     return obj && typeof obj === 'object'
   }
 
+  function assemble(parts, replacements, count, debug) {
+    var result = parts[0]
+    var i = 1
+    var len = parts.length
+    while (i < len) {
+      var part = parts[i]
+      var val = replacements[part]
+      if (val == null) {
+        if (part === 'n' && count != null) {
+          val = count
+        } else {
+          debug && console.warn('No "' + part + '" in placeholder object:', replacements)
+          val = '{' + part + '}'
+        }
+      }
+      result += val + parts[i+1]
+      i += 2
+    }
+    return result
+  }
+
   var translatejs = function (messageObject, options) {
     var debug = options && options.debug
 
@@ -47,49 +68,20 @@
       var mappedCount = Math.abs(count)
 
       if (translation[mappedCount] != null) {
-        translation = translation[mappedCount]
-      } else {
-        var plFunc = (tFunc.opts || {}).pluralize
-        mappedCount = plFunc ? plFunc(mappedCount, translation) : mappedCount
-        if (translation[mappedCount] != null) {
-          translation = translation[mappedCount]
-        } else if (translation.n != null) {
-          translation = translation.n
-        } else {
-          debug && console.warn('No plural forms found for "' + count + '" in', translation)
-        }
+        return translation[mappedCount]
       }
-      return translation
+      var plFunc = (tFunc.opts || {}).pluralize
+      mappedCount = plFunc ? plFunc(mappedCount, translation) : mappedCount
+      if (translation[mappedCount] != null) {
+        return translation[mappedCount]
+      }
+      if (translation.n != null) {
+        return translation.n
+      }
+      debug && console.warn('No plural forms found for "' + count + '" in', translation)
     }
 
     var replCache = {}
-
-    var assemble = function (parts, replacements, count) {
-      var result = parts[0]
-      var isText = false
-      var i = 1
-      var len = parts.length
-      while (i < len) {
-        var part = parts[i]
-        if (isText) {
-          result += part
-        } else {
-          var val = replacements[part]
-          if (val == null) {
-            if (part === 'n' && count != null) {
-              val = count
-            } else {
-              debug && console.warn('No "' + part + '" in placeholder object:', replacements)
-              val = '{' + part + '}'
-            }
-          }
-          result += val
-        }
-        isText = !isText
-        i++
-      }
-      return result
-    }
 
     function replacePlaceholders (translation, replacements, count) {
       var result = replCache[translation]
@@ -109,7 +101,7 @@
         result = parts.length > 1 ? parts : parts[0]
         replCache[translation] = result
       }
-      result = result.pop ? assemble(result, replacements, count) : result
+      result = result.pop ? assemble(result, replacements, count, debug) : result
       return result
     }
 
