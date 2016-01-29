@@ -258,3 +258,12 @@ describe('translate.js', function () {
     expect(t('test', { x: 'HelloWorld' })).to.equal('HelloWorld')
   })
 })
+
+describe('vdom awareness', function () {
+  it('should not kill any objects and return arrays as translations', function () {
+    var t = translate({
+      test: 'abc {xyz} def'
+    })
+    expect(t.arr('test', { xyz: { foo: 'bar' } })).to.eql(['abc ', { foo: 'bar' }, ' def'])
+  })
+})
