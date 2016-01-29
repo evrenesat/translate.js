@@ -29,7 +29,8 @@ var messages = {
 
 var options = {
     // These are the defaults:
-    debug: false, //[Boolean]: Logs missing translations to console and add "@@" around output if `true`.
+    debug: false,  //[Boolean]: Logs missing translations to console and add "@@" around output, if `true`.
+    array: false,  //[Boolean]: Returns translations with placeholder-replacements as Arrays, if `true`.
     pluralize: function(n,translKey){ return Math.abs(n); }  //[Function(count,translationKey)]: Provides a custom pluralization mapping function.
 }
 
@@ -171,16 +172,26 @@ by using the `arr`-helper. It does not convert the translation result to a
 string but rather returns an array with all the placeholder-replacements left intact.
 
 ```js
-  var t = translate({
-    test: 'abc {fancyImage} def'
-  })
+var keys = { test: 'abc {fancyImage} def' }
+var t = translate(keys)
 
-  t.arr('test', {
-    fancyImage: m('img', { src: 'image.jpg' })
-  })
-  // results in ['abc ', { tag: 'img', ... }, ' def']
+t.arr('test', {
+  fancyImage: m('img', { src: 'image.jpg' })
 })
+// results in ['abc ', { tag: 'img', ... }, ' def']
 ```
+
+You can also set this as the default behaviour, by supplying `array:true` option when initializing the translation function.
+
+```js
+ t = translate(keys, { array: true });
+
+t('test', {
+  fancyImage: m('img', { src: 'image.jpg' })
+})
+// results in ['abc ', { tag: 'img', ... }, ' def']
+```
+
 
 ## Namespace-Support
 
