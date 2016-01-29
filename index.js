@@ -4,6 +4,9 @@
  * v0.3.0
  *
  * Usage:
+ * 
+ * var translate = require('translate.js')
+ * 
  * var messages = {
  *  translationKey: 'translationValue'
  * }
@@ -14,7 +17,7 @@
  *   pluralize: function(n,translKey){ return Math.abs(n); } //[Function(count,translationKey)]: Provides a custom pluralization mapping function.
  * }
  *
- * var t = libTranslate.getTranslationFunction(messages, [options])
+ * var t = translate(messages, [options])
  *
  * t('translationKey')
  * t('translationKey', count)
