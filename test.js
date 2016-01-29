@@ -259,8 +259,8 @@ describe('translate.js', function () {
   })
 })
 
-describe('vdom awareness', function () {
-  it('should not kill any objects and return arrays as translations', function () {
+describe('Return array option', function () {
+  it('should return replacement-token translations as Arrays, when t.arr() is called', function () {
     var t = translate({
       test: 'abc {xyz} def'
     })
