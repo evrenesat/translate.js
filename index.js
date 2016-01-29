@@ -4,9 +4,9 @@
  * v0.3.0
  *
  * Usage:
- * 
+ *
  * var translate = require('translate.js')
- * 
+ *
  * var messages = {
  *  translationKey: 'translationValue'
  * }
@@ -38,11 +38,10 @@
     return obj && typeof obj === 'object'
   }
 
-  function assemble(parts, replacements, count, debug) {
-    var result = parts[0]
-    var i = 1
+  function assemble (parts, replacements, count, debug) {
+    var result = [].concat(parts)
     var len = parts.length
-    while (i < len) {
+    for (var i = 1; i < len; i += 2) {
       var part = parts[i]
       var val = replacements[part]
       if (val == null) {
@@ -53,8 +52,7 @@
           val = '{' + part + '}'
         }
       }
-      result += val + parts[i+1]
-      i += 2
+      result[i] = val
     }
     return result
   }
@@ -105,7 +103,7 @@
       return result
     }
 
-    var tFunc = function (translationKey, count, replacements) {
+    function runTranslation (joinResult, translationKey, count, replacements) {
       var translation = tFunc.keys[translationKey]
       var complex = count != null || replacements != null
 
@@ -134,9 +132,14 @@
         translation = replacePlaceholders(translation, replacements, count)
       }
 
+      if (joinResult && translation && translation.join) {
+        return translation.join('')
+      }
       return translation
     }
 
+    var tFunc = runTranslation.bind(null, true)
+    tFunc.arr = runTranslation.bind(null, false)
     tFunc.keys = messageObject || {}
     tFunc.opts = options || {}
 

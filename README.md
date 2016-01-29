@@ -163,7 +163,24 @@ var t = translate( messages_IS, { pluralize:pluralize_IS  })
 
 Here's a large list of [pluralization algorithms by language](http://docs.translatehouse.org/projects/localization-guide/en/latest/l10n/pluralforms.html?id=l10n/pluralforms).
 
+## Working with VDOM libs
 
+If you work with VDOM-libs such as [mithril.js](http://mithril.js.org/) you
+sometimes want to include VDOM nodes into the translation. This is possible
+by using the `arr`-helper. It does not convert the translation result to a
+string but rather returns an array with all the replacements left intact.
+
+```js
+  var t = translate({
+    test: 'abc {fancyImage} def'
+  })
+
+  t.arr('test', {
+    fancyImage: m('img', { src: 'image.jpg' })
+  })
+  // results in ['abc ', { tag: 'img', ... }, ' def']
+})
+```
 
 ## Namespace-Support
 
