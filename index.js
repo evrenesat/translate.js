@@ -40,7 +40,7 @@
   }
 
   function assemble (parts, replacements, count, debug, asArray) {
-    var result = asArray ? [parts[0]] : parts[0]
+    var result = asArray ? parts.slice() : parts[0]
     var len = parts.length
     for (var i = 1; i < len; i += 2) {
       var part = parts[i]
@@ -55,7 +55,6 @@
       }
       if ( asArray ) {
         result[i] = val
-        result[i+1] = parts[i+1]
       } else {
         result += val + parts[i+1]
       }
