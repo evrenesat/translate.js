@@ -18,32 +18,35 @@
 
   <script src="node_modules/benchmark/benchmark.js"></script>
 
-  <script>window.T = {};</script>
-  <script>window.module = {}; // to capture module.exports from older versions of translate.js...</script>
+  <script>
+    window.T = {}; // T contains all the versions of translate.js we want to test
+    window.module = { exports:{} }; // to capture module.exports from older versions of translate.js...
+  </script>
 
-  <script src="https://rawgithub.com/StephanHoyer/translate.js/0b14fd884a8305dd93c52f4014d1eacd4ec21505/index.js"></script>
-  <script>T['Version 0.1.0'] = module.exports;</script>
+  <script src="https://rawgit.com/StephanHoyer/translate.js/v0.1.0/index.js"></script>
+  <script>T['0.1.0'] = module.exports;</script>
 <!--
-  <script src="https://rawgithub.com/StephanHoyer/translate.js/b47c4546353fbe38b8e448bcd743c4ef353427c4/index.js"></script>
-  <script>T['Exposed Internals'] = module.exports;</script>
-
-  <script src="https://rawgithub.com/StephanHoyer/translate.js/f6a0e9c41c66bcb81c9b7d2067d7fdcedba4e130/index.js"></script>
-  <script>T['Speed-up simple strings'] = module.exports;</script>
+  <script src="https://rawgit.com/StephanHoyer/translate.js/v0.2.0/index.js"></script>
+  <script>T['0.2.0 - Speed-up simple strings'] = module.exports;</script>
 -->
-  <script>window.module = undefined;</script>
+  <script src="https://rawgit.com/StephanHoyer/translate.js/v0.2.2/index.js"></script>
+  <script>T['0.2.2 - Speed-up replacements'] = module.exports;</script>
 
+  <script src="https://rawgit.com/StephanHoyer/translate.js/v0.3.1/index.js"></script>
+  <script>T['0.3.1 - Drop Namespace support'] = module.exports;</script>
 
-  <script src="https://rawgithub.com/StephanHoyer/translate.js/master/index.js"></script>
-  <script>T['Current Master'] = translatejs;</script>
+  <script src="https://rawgit.com/StephanHoyer/translate.js/v0.3.2/index.js"></script>
+  <script>T['0.3.2 - Simplify assemble function'] = module.exports;</script>
+
+  <script src="https://rawgit.com/StephanHoyer/translate.js/v0.4.0/index.js"></script>
+  <script>T['0.4.0 - Introducing t.arr()'] = module.exports;</script>
 <!--
-  <script src="https://rawgithub.com/StephanHoyer/translate.js/6ec38a533ccc2f806a70958a6a3b804723e6109a/index.js"></script>
-  <script>T['No arguments.length'] = translatejs;</script>
-
-  <script src="https://rawgithub.com/StephanHoyer/translate.js/8715fddac8b886403923ce9cea4be0ccb048dbf6/index.js"></script>
-  <script>T['Compiled replace'] = translatejs;</script>
+  <script src="https://rawgit.com/StephanHoyer/translate.js/master/index.js"></script>
+  <script>T['Current Master'] = module.exports;</script>
 -->
+
   <script src="index.js"></script>
-  <script>T['Local file'] = translatejs;</script>
+  <script>T['Local file'] = module.exports;</script>
 
 
   <script>
@@ -51,7 +54,8 @@
     var out = document.getElementById('out');
     out.innerHTML = '--------------------------------------------\n';
 
-    var textObj = {
+    // Collection of different types of translation keys that get fed into the testFuncs below.
+    var testKeys = {
         vanilla: {
             'a': 'Lorem',
             'b': 'Ipsum',
@@ -73,18 +77,14 @@
       }
     // var replacements = { '0':'Lorem',  '1':'ipsum', '2':'dolor' };
     var replacements = ['Lorem','ipsum','dolor'];
-    var count = 0;
-    var count1 = 1;
-    var countP = 2;
-    var countN = 99;
-
-    var isPlural = function ( n ) { return n!=1 ? 'p' : 's'; };
+    // var pluralizer = function ( n ) { return n!=1 ? 'p' : 's'; };
 
 
-    var testFn = {
-        simple: function ( t, txts ) {
+    // Collection of test functions
+    var testFuncs = {
+        simple: function ( t, keys ) {
             return function(){
-                for (var key in txts)
+                for (var key in keys)
                 {
                   t(key);
                   t(key);
@@ -93,9 +93,9 @@
                 }
               };
           },
-        replacement: function ( t, txts ) {
+        replacement: function ( t, keys ) {
             return function(){
-                for (var key in txts)
+                for (var key in keys)
                 {
                   t(key, replacements);
                   t(key, replacements);
@@ -107,53 +107,59 @@
     }
 
 
+    // Named test definitions - combining testFuncs and testKeys to be run.
     var tests = [
         {
-          //disabled: true,
+          // disabled: true,
           name: 'Vanilla keys',
-          texts: textObj.vanilla, // or self-running function;
+          keys: testKeys.vanilla, // or self-running function;
           // opts: undefined,
-          fn: testFn.simple,
+          fn: testFuncs.simple,
         },
         {
-          //disabled: true,
+          // disabled: true,
           name: 'Vanilla keys - unnecessary options',
-          texts: textObj.vanilla, // or self-running function;
+          keys: testKeys.vanilla, // or self-running function;
           // opts: undefined,
-          fn: testFn.replacement,
+          fn: testFuncs.replacement,
         },
         {
-          //disabled: true,
+          // disabled: true,
           name: 'Replacement single keys',
-          texts: textObj.singleKeyed, // or self-running function;
+          keys: testKeys.singleKeyed, // or self-running function;
           // opts: undefined,
-          fn: testFn.replacement,
+          fn: testFuncs.replacement,
         },
         {
           //disabled: true,
           name: 'Replacement multiple keys',
-          texts: textObj.multiKeyed, // or self-running function;
+          keys: testKeys.multiKeyed, // or self-running function;
           // opts: undefined,
-          fn: testFn.replacement,
+          fn: testFuncs.replacement,
         },
       ];
 
 
+    // The test runner - loops through `tests` Array and runs one test at a time
     var testIndex = 0;
     var runNext = function () {
         var test = tests[testIndex++];
-        if ( test )
+        if ( test)
         {
-          if (test.disabled) { setTimeout(runNext, 0); return; }
+          // Skip over disabled tests
+          if (test.disabled) {
+            setTimeout(runNext, 0);
+            return;
+          }
 
           out.innerHTML += test.name + ':\n';
           var suite = new Benchmark.Suite;
           for (var version in T)
           {
-            suite.add(
-                version,
-                test.fn( T[version]( test.texts, test.opts ), test.texts )
-              );
+            var testFn = test.fn( T[version]( test.keys, test.opts ), test.keys );
+            if ( testFn ) {
+              suite.add( version, testFn );
+            }
           }
           suite
               .on('cycle', function(e) {
@@ -170,6 +176,7 @@
         }
       };
 
+    // Run the first test!
     runNext();
   </script>
 
