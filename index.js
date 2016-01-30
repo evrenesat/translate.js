@@ -39,8 +39,8 @@
     return obj && typeof obj === 'object'
   }
 
-  function assemble (parts, replacements, count, debug, array) {
-    var result = array ? [parts[0]] : parts[0]
+  function assemble (parts, replacements, count, debug, asArray) {
+    var result = asArray ? [parts[0]] : parts[0]
     var len = parts.length
     for (var i = 1; i < len; i += 2) {
       var part = parts[i]
@@ -53,7 +53,7 @@
           val = '{' + part + '}'
         }
       }
-      if ( array ) {
+      if ( asArray ) {
         result[i] = val
         result[i+1] = parts[i+1]
       } else {
