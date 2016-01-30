@@ -39,8 +39,8 @@
     return obj && typeof obj === 'object'
   }
 
-  function assemble (parts, replacements, count, options) {
-    var result = [].concat(parts)
+  function assemble (parts, replacements, count, debug, array) {
+    var result = array ? [parts[0]] : parts[0]
     var len = parts.length
     for (var i = 1; i < len; i += 2) {
       var part = parts[i]
@@ -49,13 +49,18 @@
         if (part === 'n' && count != null) {
           val = count
         } else {
-          options.debug && console.warn('No "' + part + '" in placeholder object:', replacements)
+          debug && console.warn('No "' + part + '" in placeholder object:', replacements)
           val = '{' + part + '}'
         }
       }
-      result[i] = val
+      if ( array ) {
+        result[i] = val
+        result[i+1] = parts[i+1]
+      } else {
+        result += val + parts[i+1]
+      }
     }
-    return options.array ? result : result.join('')
+    return result
   }
 
   var translatejs = function (messageObject, options) {
@@ -101,7 +106,7 @@
         result = parts.length > 1 ? parts : parts[0]
         replCache[translation] = result
       }
-      result = result.pop ? assemble(result, replacements, count, tFunc.opts) : result
+      result = result.pop ? assemble(result, replacements, count, debug, tFunc.opts.array) : result
       return result
     }
 
