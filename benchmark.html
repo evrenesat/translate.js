@@ -103,7 +103,18 @@
                   t(key, replacements);
                 }
               };
-          }
+          },
+        replacementArray: function ( t, keys ) {
+            return t.arr && function(){
+                for (var key in keys)
+                {
+                  t.arr(key, replacements);
+                  t.arr(key, replacements);
+                  t.arr(key, replacements);
+                  t.arr(key, replacements);
+                }
+              };
+          },
     }
 
 
@@ -136,6 +147,13 @@
           keys: testKeys.multiKeyed, // or self-running function;
           // opts: undefined,
           fn: testFuncs.replacement,
+        },
+        {
+          //disabled: true,
+          name: 'Replacement multiple keys (VDOM)',
+          keys: testKeys.multiKeyed, // or self-running function;
+          // opts: undefined,
+          fn: testFuncs.replacementArray,
         },
       ];
 
