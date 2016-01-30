@@ -13,7 +13,8 @@
  *
  * var options = {
  *   // These are the defaults:
- *   debug: false, //[Boolean]: Logs missing translations to console and add "@@" around output if `true`.
+ *   debug: false,  //[Boolean]: Logs missing translations to console and add "@@" around output if `true`.
+ *   array: false,  //[Boolean]: `true` returns translations with placeholder-replacements as Arrays.
  *   pluralize: function(n,translKey){ return Math.abs(n); } //[Function(count,translationKey)]: Provides a custom pluralization mapping function.
  * }
  *
@@ -38,8 +39,8 @@
     return obj && typeof obj === 'object'
   }
 
-  function assemble (parts, replacements, count, debug) {
-    var result = [].concat(parts)
+  function assemble (parts, replacements, count, debug, asArray) {
+    var result = asArray ? parts.slice() : parts[0]
     var len = parts.length
     for (var i = 1; i < len; i += 2) {
       var part = parts[i]
@@ -52,13 +53,18 @@
           val = '{' + part + '}'
         }
       }
-      result[i] = val
+      if ( asArray ) {
+        result[i] = val
+      } else {
+        result += val + parts[i+1]
+      }
     }
     return result
   }
 
   var translatejs = function (messageObject, options) {
-    var debug = options && options.debug
+    options = options || {}
+    var debug = options.debug
 
     function getPluralValue (translation, count) {
       // Opinionated assumption: Pluralization rules are the same for negative and positive values.
@@ -99,11 +105,11 @@
         result = parts.length > 1 ? parts : parts[0]
         replCache[translation] = result
       }
-      result = result.pop ? assemble(result, replacements, count, debug) : result
+      result = result.pop ? assemble(result, replacements, count, debug, tFunc.opts.array) : result
       return result
     }
 
-    function runTranslation (joinResult, translationKey, count, replacements) {
+    var tFunc = function (translationKey, count, replacements) {
       var translation = tFunc.keys[translationKey]
       var complex = count != null || replacements != null
 
@@ -131,17 +137,21 @@
       } else if (complex || debug) {
         translation = replacePlaceholders(translation, replacements, count)
       }
-
-      if (joinResult && translation && translation.join) {
-        return translation.join('')
-      }
       return translation
     }
 
-    var tFunc = runTranslation.bind(null, true)
-    tFunc.arr = runTranslation.bind(null, false)
+    // Convenience function.
+    tFunc.arr = function () {
+        var opts = tFunc.opts
+        var normalArrayOption = opts.array
+        opts.array = true
+        var result = tFunc.apply(null, arguments)
+        opts.array = normalArrayOption
+        return result
+      };
+
     tFunc.keys = messageObject || {}
-    tFunc.opts = options || {}
+    tFunc.opts = options
 
     return tFunc
   }

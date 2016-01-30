@@ -266,4 +266,10 @@ describe('Return array option', function () {
     })
     expect(t.arr('test', { xyz: { foo: 'bar' } })).to.eql(['abc ', { foo: 'bar' }, ' def'])
   })
+  it('should return replacement-token translations as Arrays, when `array` option is supplied', function () {
+    var t = translate({
+      test: 'abc {xyz} def'
+    }, { array:true })
+    expect(t('test', { xyz: { foo: 'bar' } })).to.eql(['abc ', { foo: 'bar' }, ' def'])
+  })
 })
