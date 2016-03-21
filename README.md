@@ -94,9 +94,9 @@ And use it like this:
 t('like') => 'I like this.'
 t('Prosa Key') => 'This is prosa!'
 
-//palceholders - named
+//placeholders - named
 t('likeThing', {thing: 'the Sun'}) => 'I like the Sun!'
-//palceholders - array
+//placeholders - array
 t('like01', ['Alice', 'Bob']) => 'I like Alice and Bob!'
 
 //count
@@ -191,7 +191,6 @@ t('test', {
 })
 // results in ['abc ', { tag: 'img', ... }, ' def']
 ```
-
 
 ## Namespace-Support
 
