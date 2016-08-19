@@ -71,9 +71,6 @@
       // By normalizing all values to positive, pluralization functions become simpler, and less error-prone by accident.
       var mappedCount = Math.abs(count)
 
-      if (translation[mappedCount] != null) {
-        return translation[mappedCount]
-      }
       var plFunc = (tFunc.opts || {}).pluralize
       mappedCount = plFunc ? plFunc(mappedCount, translation) : mappedCount
       if (translation[mappedCount] != null) {
@@ -120,19 +117,29 @@
           count = tmp
         }
         replacements = replacements || {}
-        count = typeof count === 'number' ? count : null
 
         if (count !== null && isObject(translation)) {
-          // get appropriate plural translation string
-          translation = getPluralValue(translation, count)
+          var propValue = translation[count]
+          if (propValue != null) {
+            translation = propValue
+          }
+          else if (typeof count === 'number') {
+            // get appropriate plural translation string
+            translation = getPluralValue(translation, count)
+          }
         }
       }
 
       if (typeof translation !== 'string') {
         translation = translationKey
         if (debug) {
-          translation = '@@' + translation + '@@'
-          console.warn('Translation for "' + translationKey + '" not found.')
+          if (count && typeof count === 'string') {
+            translation = '@@' + translationKey + '.' + count + '@@'
+            console.warn(['Translation for ', translationKey, ' with subkey ', count, ' not found.'].join('"'))
+          } else {
+            translation = '@@' + translation + '@@'
+            console.warn('Translation for "' + translationKey + '" not found.')
+          }
         }
       } else if (complex || debug) {
         translation = replacePlaceholders(translation, replacements, count)
