@@ -106,26 +106,26 @@
       return result
     }
 
-    var tFunc = function (translationKey, count, replacements) {
+    var tFunc = function (translationKey, subKey, replacements) {
       var translation = tFunc.keys[translationKey]
-      var complex = count != null || replacements != null
+      var complex = subKey != null || replacements != null
 
       if (complex) {
-        if (isObject(count)) {
+        if (isObject(subKey)) {
           var tmp = replacements
-          replacements = count
-          count = tmp
+          replacements = subKey
+          subKey = tmp
         }
         replacements = replacements || {}
 
-        if (count !== null && isObject(translation)) {
-          var propValue = translation[count]
+        if (subKey !== null && isObject(translation)) {
+          var propValue = translation[subKey]
           if (propValue != null) {
             translation = propValue
           }
-          else if (typeof count === 'number') {
+          else if (typeof subKey === 'number') {
             // get appropriate plural translation string
-            translation = getPluralValue(translation, count)
+            translation = getPluralValue(translation, subKey)
           }
         }
       }
@@ -133,16 +133,16 @@
       if (typeof translation !== 'string') {
         translation = translationKey
         if (debug) {
-          if (count && typeof count === 'string') {
-            translation = '@@' + translationKey + '.' + count + '@@'
-            console.warn(['Translation for ', translationKey, ' with subkey ', count, ' not found.'].join('"'))
+          if (subKey && typeof subKey === 'string') {
+            translation = '@@' + translationKey + '.' + subKey + '@@'
+            console.warn(['Translation for ', translationKey, ' with subkey ', subKey, ' not found.'].join('"'))
           } else {
             translation = '@@' + translation + '@@'
             console.warn('Translation for "' + translationKey + '" not found.')
           }
         }
       } else if (complex || debug) {
-        translation = replacePlaceholders(translation, replacements, count)
+        translation = replacePlaceholders(translation, replacements, subKey)
       }
       return translation
     }
