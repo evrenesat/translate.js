@@ -42,7 +42,8 @@ describe('translate.js', function () {
 
     'Prosa Key': 'This is prosa!',
 
-    'comboCounter': '{name} is {n} years old.'
+    comboCounter: '{name} is {n} years old.',
+    translationWithSubkeys: { 'foo': 'FOO' }
   }
 
   var t = translate(translationsObject)
@@ -69,6 +70,11 @@ describe('translate.js', function () {
 
   it('should return a translated string and replace a count', function () {
     expect(t('simpleCounter', 25)).to.equal('The count is 25.')
+  })
+
+  it('should return a translated string according to a potential dynamic subkey', function () {
+    var dynamicSubKey = 'foo';
+    expect(t('translationWithSubkeys', dynamicSubKey)).to.equal('FOO')
   })
 
   it('should return a translated string with the correct plural form (0)', function () {
@@ -168,9 +174,11 @@ describe('translate.js', function () {
 
   // debug enabled
   var t5 = translate(translationsObject, {debug: true})
-  it('should return @@translationKey@@ if no translation is found and debug is true', function () {
+  it('should return @@translationKey@@/@@translationKey.subKey@@ if no translation is found and debug is true', function () {
     expect(t5('nonexistentkey')).to.equal('@@nonexistentkey@@')
+    expect(t5('translationWithSubkeys', 'not there')).to.equal('@@translationWithSubkeys.not there@@')
   })
+
 
   var t6Keys = {
     fruit: '{0} apples, {1} oranges, {2} kiwis',
