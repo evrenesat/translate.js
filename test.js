@@ -177,6 +177,8 @@ describe('translate.js', function () {
   it('should return @@translationKey@@/@@translationKey.subKey@@ if no translation is found and debug is true', function () {
     expect(t5('nonexistentkey')).to.equal('@@nonexistentkey@@')
     expect(t5('translationWithSubkeys', 'not there')).to.equal('@@translationWithSubkeys.not there@@')
+    expect(t5('translationWithSubkeys', 42)).to.equal('@@translationWithSubkeys.42@@')
+    expect(t5('nonexistentkey', 42)).to.equal('@@nonexistentkey.42@@')
   })
 
 

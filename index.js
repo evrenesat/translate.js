@@ -79,7 +79,6 @@
       if (translation.n != null) {
         return translation.n
       }
-      debug && console.warn('No plural forms found for "' + count + '" in', translation)
     }
 
     var replCache = {}
@@ -133,9 +132,9 @@
       if (typeof translation !== 'string') {
         translation = translationKey
         if (debug) {
-          if (subKey && typeof subKey === 'string') {
+          if (subKey != null) {
             translation = '@@' + translationKey + '.' + subKey + '@@'
-            console.warn(['Translation for ', translationKey, ' with subkey ', subKey, ' not found.'].join('"'))
+            console.warn('No translation or pluralization form found for "' + subKey + '" in' + translationKey)
           } else {
             translation = '@@' + translation + '@@'
             console.warn('Translation for "' + translationKey + '" not found.')
