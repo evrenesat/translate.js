@@ -71,9 +71,6 @@
       // By normalizing all values to positive, pluralization functions become simpler, and less error-prone by accident.
       var mappedCount = Math.abs(count)
 
-      if (translation[mappedCount] != null) {
-        return translation[mappedCount]
-      }
       var plFunc = (tFunc.opts || {}).pluralize
       mappedCount = plFunc ? plFunc(mappedCount, translation) : mappedCount
       if (translation[mappedCount] != null) {
@@ -82,7 +79,6 @@
       if (translation.n != null) {
         return translation.n
       }
-      debug && console.warn('No plural forms found for "' + count + '" in', translation)
     }
 
     var replCache = {}
@@ -109,33 +105,43 @@
       return result
     }
 
-    var tFunc = function (translationKey, count, replacements) {
+    var tFunc = function (translationKey, subKey, replacements) {
       var translation = tFunc.keys[translationKey]
-      var complex = count != null || replacements != null
+      var complex = subKey != null || replacements != null
 
       if (complex) {
-        if (isObject(count)) {
+        if (isObject(subKey)) {
           var tmp = replacements
-          replacements = count
-          count = tmp
+          replacements = subKey
+          subKey = tmp
         }
         replacements = replacements || {}
-        count = typeof count === 'number' ? count : null
 
-        if (count !== null && isObject(translation)) {
-          // get appropriate plural translation string
-          translation = getPluralValue(translation, count)
+        if (subKey !== null && isObject(translation)) {
+          var propValue = translation[subKey]
+          if (propValue != null) {
+            translation = propValue
+          }
+          else if (typeof subKey === 'number') {
+            // get appropriate plural translation string
+            translation = getPluralValue(translation, subKey)
+          }
         }
       }
 
       if (typeof translation !== 'string') {
         translation = translationKey
         if (debug) {
-          translation = '@@' + translation + '@@'
-          console.warn('Translation for "' + translationKey + '" not found.')
+          if (subKey != null) {
+            translation = '@@' + translationKey + '.' + subKey + '@@'
+            console.warn('No translation or pluralization form found for "' + subKey + '" in' + translationKey)
+          } else {
+            translation = '@@' + translation + '@@'
+            console.warn('Translation for "' + translationKey + '" not found.')
+          }
         }
       } else if (complex || debug) {
-        translation = replacePlaceholders(translation, replacements, count)
+        translation = replacePlaceholders(translation, replacements, subKey)
       }
       return translation
     }
