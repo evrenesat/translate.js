@@ -53,14 +53,14 @@ First create a language specific object for your translations:
 var messages = {
     like: 'I like this.',
     likeThing: 'I like {thing}!',
-    like01: 'I like {0} and {1}!',
+    likeTwoThings: 'I like {0} and {1}!',
     simpleCounter: 'The count is {n}.',
     hits: {
         0: 'No Hits',
         1: '{n} Hit',
         2: '{n} Hitse',  //some slavic langs have multiple plural forms
         3: '{n} Hitses', //some slavic langs have multiple plural forms
-        n: '{n} Hits' // default
+        n: '{n} Hits', // default
     },
     date: {
         1: '{day}. January {year}',
@@ -74,7 +74,7 @@ var messages = {
         9: '{day}. September {year}',
         10: '{day}. October {year}',
         11: '{day}. November {year}',
-        12: '{day}. December {year}'
+        12: '{day}. December {year}',
     },
 
     'Prosa Key': 'This is prosa!',  
@@ -97,7 +97,7 @@ t('Prosa Key') => 'This is prosa!'
 //placeholders - named
 t('likeThing', {thing: 'the Sun'}) => 'I like the Sun!'
 //placeholders - array
-t('like01', ['Alice', 'Bob']) => 'I like Alice and Bob!'
+t('likeTwoThings', ['Alice', 'Bob']) => 'I like Alice and Bob!'
 
 //count
 t('simpleCounter', 25) => 'The count is 25'
@@ -113,9 +113,11 @@ t('date', 2, {day: '13', year: 2014}) => '13. February 2014'
 It is flexible, so you can add/replace translations after the fact by modifying the `.keys` property, like so:
 
 ```js
+//add/update keys
 t.keys['add-key'] = 'Sorry I am late!'
 t('add-key'); => 'Sorry I am late!'
 
+//replace keys object
 t.keys = { 'new-key': 'All is new!' }
 t('new-key'); => 'All is new!'
 t('add-key'); => 'add-key' (No longer translated)
@@ -129,17 +131,17 @@ var t2 = function () { return t.apply(null,arguments); }
 ```
 
 
-### Custom pluralization
+### Pluralization
 
-You can also do customized pluralization like this:
+You can also do customized pluralization selection, like this:
 
 ```js
 var messages_IS = {
     sheep: {
         0: 'Engar kindur',
-        13: 'Baaahd luck!'
         s: '{n} kind',
-        p: '{n} kindur'
+        p: '{n} kindur',
+        13: 'Baaahd luck!',
     }
 }
 var pluralize_IS = function ( n, tarnslationKey ) {
@@ -148,11 +150,11 @@ var pluralize_IS = function ( n, tarnslationKey ) {
 }
 var t = translate( messages_IS, { pluralize: pluralize_IS })
 
-t('sheep', 0) => 'Engar kindur'
-t('sheep', 1) => '1 kind'
-t('sheep', 2) => '2 kindur'
-t('sheep', 21) => '21 kind'
-t('sheep', 13) => 'Baaahd luck'  // explicit translation takes precedence 
+t('sheep', 0) => 'Engar kindur' // direct subkey hit takes precedence
+t('sheep', 1) => '1 kind'  // pluralize_IS(1) => 's' 
+t('sheep', 2) => '2 kindur'  // pluralize_IS(2) => 'p' 
+t('sheep', 21) => '21 kind'  // pluralize_IS(21) => 's'
+t('sheep', 13) => 'Baaahd luck'  // direct subkey match 
 ```
 
 Translate.js comes with a predefined `pluralize` functions for [several languages](pluralize/). These can be required into your code as needed, like so:
@@ -164,10 +166,10 @@ var t = translate( messages_IS, { pluralize:pluralize_IS  })
 
 Here's a large list of [pluralization algorithms by language](http://docs.translatehouse.org/projects/localization-guide/en/latest/l10n/pluralforms.html?id=l10n/pluralforms).
 
-## Working with VDOM libs
 
-If you work with VDOM-libs such as [mithril.js](http://mithril.js.org/) you
-sometimes want to include VDOM nodes into the translation. This is possible
+## Working with VDOM libraries
+
+If you work with VDOM-libraries such as [mithril.js](http://mithril.js.org/) you sometimes want to include VDOM nodes into the translation. This is possible
 by using the `arr`-helper. It does not convert the translation result to a
 string but rather returns an array with all the placeholder-replacements left intact.
 
