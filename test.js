@@ -150,11 +150,15 @@ describe('translate.js', function () {
   it('should pluralize (29) correctly in Icelandic', function () {
     expect(t3b('icelandicSheep', 29)).to.equal('29 kindur')
   })
+  it('should automatically return correct pluralization for negative counts', function () {
+    expect(t3b('icelandicSheep', -21)).to.equal('-21 kind')
+    expect(t3b('icelandicSheep', -29)).to.equal('-29 kindur')
+  })
   it('should return explicit pluralization property regardless of pluralization function', function () {
     expect(t3b('icelandicSheep', 13)).to.equal('Baaahd luck!')
   })
-  it('should automatically return correct pluralization for negative counts', function () {
-    expect(t3b('icelandicSheep', -13)).to.equal('Baaahd luck!')
+  it('should not match negative count with its explicitly defined positive counterpart', function () {
+    expect(t3b('icelandicSheep', -13)).to.equal('-13 kindur')
   })
   it('should default to the `n` key if some/all pluralization keys are missing', function () {
     expect(t3b('horses', 7)).to.equal('Pluralization keys are missing')
