@@ -151,13 +151,13 @@ describe('translate.js', function () {
     expect(t3b('icelandicSheep', 29)).to.equal('29 kindur')
   })
   it('should return explicit pluralization property regardless of pluralization function', function () {
-    expect(t5('icelandicSheep', 13)).to.equal('Baaahd luck!')
+    expect(t3b('icelandicSheep', 13)).to.equal('Baaahd luck!')
   })
   it('should automatically return correct pluralization for negative counts', function () {
-    expect(t5('icelandicSheep', -13)).to.equal('Baaahd luck!')
+    expect(t3b('icelandicSheep', -13)).to.equal('Baaahd luck!')
   })
   it('should default to the `n` key if some/all pluralization keys are missing', function () {
-    expect(t5('horses', 7)).to.equal('Pluralization keys are missing')
+    expect(t3b('horses', 7)).to.equal('Pluralization keys are missing')
   })
 
   // wrong arguments
