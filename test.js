@@ -108,22 +108,22 @@ describe('translate.js', function () {
     expect('n' in placeholders).to.equal(false)
   })
 
-  var notringtranslatio = {
+  var nonstringtranslations = {
     foo: 10,
     bar: [],
     baz: {},
     heh: null,
     ooh: true,
-    happeToBeString: 'OK'
+    happensToBeString: 'OK'
   }
-  var t0 = translate(notringtranslatio)
-  it('should treat any non-string translatio as missing', function () {
+  var t0 = translate(nonstringtranslations)
+  it('should treat any non-string translations as missing', function () {
     expect(t0('foo')).to.equal('foo')
     expect(t0('bar')).to.equal('bar')
     expect(t0('baz')).to.equal('baz')
     expect(t0('heh')).to.equal('heh')
     expect(t0('ooh')).to.equal('ooh')
-    expect(t0('happeToBeString')).to.equal('OK')
+    expect(t0('happensToBeString')).to.equal('OK')
   })
 
   // custom isPlural function
