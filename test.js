@@ -160,6 +160,15 @@ describe('translate.js', function () {
     expect(t3b('horses', 7)).to.equal('Pluralization keys are missing')
   })
 
+  it('should ignore count/subkey if translation is a plain string', function () {
+    expect(t3b('plain', 666)).to.equal('I like this.')
+    expect(t3b('plain', 'nonexistentsubkey')).to.equal('I like this.')
+  })
+  it('should ignore replacements object if translation is a plain string', function () {
+    expect(t3b('plain', {nonexistentreplacement: 'foo'})).to.equal('I like this.')
+  })
+
+
   // wrong arguments
   var t4 = translate(translationsObject, 'asd')
   it('should return a translated string with the correct plural form and replaced placeholders: t(key, count, replacements) [wrong optio arg]', function () {
