@@ -37,10 +37,10 @@ var options = {
 var t = translate(messages, [options])
 
 t('translationKey')
-t('translationKey', count)
+t('translationKey', subkey)
 t('translationKey', {replaceKey: 'replacevalue'})
-t('translationKey', count, {replaceKey: 'replacevalue'})
-t('translationKey', {replaceKey: 'replacevalue'}, count)
+t('translationKey', subkey, {replaceKey: 'replacevalue'})
+t('translationKey', {replaceKey: 'replacevalue'}, subkey)
 
 ```
 
@@ -76,6 +76,10 @@ var messages = {
         11: '{day}. November {year}',
         12: '{day}. December {year}',
     },
+    saveButton: {
+        label: 'Save',
+        tooltip: 'Save unsaved changes',
+    },
 
     'Prosa Key': 'This is prosa!',  
 
@@ -99,14 +103,18 @@ t('likeThing', {thing: 'the Sun'}) => 'I like the Sun!'
 //placeholders - array
 t('likeTwoThings', ['Alice', 'Bob']) => 'I like Alice and Bob!'
 
-//count
+//subkeys
+t('saveButton', 'label') => 'Save'
+t('saveButton', 'tooltip') => 'Save unsaved changes'
+
+//numerical subkeys (count)
 t('simpleCounter', 25) => 'The count is 25'
 t('hits', 0) => 'No Hits'
 t('hits', 1) => '1 Hit'
 t('hits', 3) => '3 Hitses'
 t('hits', 99) => '99 Hits'
 
-//combined count and placeholders
+//combined count/subkey and placeholders
 t('date', 2, {day: '13', year: 2014}) => '13. February 2014'
 ```
 
@@ -149,12 +157,17 @@ var pluralize_IS = function ( n, tarnslationKey ) {
     return (n%10 !== 1 || n%100 === 11) ? 'p' : 's'
 }
 var t = translate( messages_IS, { pluralize: pluralize_IS })
+```
 
+With this setup, all failed numerical subkey lookups get passed through the pluralization function and the return value (in this case either 's' or 'p')
+is then used as a subkey, like so.
+
+```js
 t('sheep', 0) => 'Engar kindur' // direct subkey hit takes precedence
 t('sheep', 1) => '1 kind'  // pluralize_IS(1) => 's' 
 t('sheep', 2) => '2 kindur'  // pluralize_IS(2) => 'p' 
 t('sheep', 21) => '21 kind'  // pluralize_IS(21) => 's'
-t('sheep', 13) => 'Baaahd luck'  // direct subkey match 
+t('sheep', 13) => 'Baaahd luck'  // direct subkey hit 
 ```
 
 Translate.js comes with a predefined `pluralize` functions for [several languages](pluralize/). These can be required into your code as needed, like so:
