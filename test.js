@@ -295,4 +295,14 @@ describe('Return array option', function () {
     }, { array:true })
     expect(t('test', { xyz: { foo: 'bar' } })).to.eql(['abc ', { foo: 'bar' }, ' def'])
   })
+  it('should return simple translations as strings, even when t.arr() is called', function () {
+    var t = translate({
+      test1: 'simple',
+      test2: { 4:'simple' },
+      test3: { subkey:'simple' },
+    })
+    expect(t.arr('test1')).to.eql('simple')
+    expect(t.arr('test2', 4)).to.eql('simple')
+    expect(t.arr('test3', 'subkey')).to.eql('simple')
+  })
 })
