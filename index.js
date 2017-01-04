@@ -64,6 +64,9 @@
 
   var translatejs = function (messageObject, options) {
     options = options || {}
+    if (options.resolveAliases) {
+      messageObject = translatejs.resolveAliases(messageObject)
+    }
     var debug = options.debug
 
     function getPluralValue (translation, count) {
@@ -159,6 +162,36 @@
     tFunc.opts = options
 
     return tFunc
+  }
+
+  function mapValues (obj, fn) {
+    return Object.keys(obj).reduce(function (res, key) {
+      res[key] = fn(obj[key], key)
+      return res
+    }, {})
+  }
+
+  translatejs.resolveAliases = function (translations) {
+    var keysHandeled = []
+    function resolveAliases (translation) {
+      if (isObject(translation)) {
+        return mapValues(translation, resolveAliases)
+      }
+      return translation.replace(/{{(.*)}}/, function (_, key) {
+        if (keysHandeled.indexOf(key) > 0) {
+          throw new Error('Circle reference for "' + key + '" detected')
+        }
+        keysHandeled.push(key)
+        if (translations[key] == null) {
+          throw new Error('Unable to find translation for placeholder "' + key + '"')
+        }
+        if (isObject(translations[key])) {
+          throw new Error('You can only use plain translations as alias')
+        }
+        return resolveAliases(translations[key])
+      })
+    }
+    return resolveAliases(translations)
   }
 
   if (typeof module !== 'undefined' && module.exports) {

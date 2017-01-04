@@ -304,3 +304,99 @@ describe('Return array option', function () {
     expect(t.arr('test3', 'subkey')).to.eql('simple')
   })
 })
+
+describe('alias usage', function () {
+  it('should work with simple translations', function () {
+    expect(translate.resolveAliases({
+      A: 'bar',
+      B: 'foo {{A}} bar'
+    })).to.eql({
+      A: 'bar',
+      B: 'foo bar bar'
+    })
+  })
+  it('should work with nested translations', function () {
+    expect(translate.resolveAliases({
+      A: 'bar',
+      B: 'foo {{A}} bar',
+      C: '< {{B}} >'
+    })).to.eql({
+      A: 'bar',
+      B: 'foo bar bar',
+      C: '< foo bar bar >'
+    })
+  })
+  it('should work with pluralized stuff translations', function () {
+    expect(translate.resolveAliases({
+      A: 'bar',
+      B: {
+        1: '1 {{A}} bar',
+        2: '2 {{A}} bar',
+        n: 'n {{A}} bar'
+      }
+    })).to.eql({
+      A: 'bar',
+      B: {
+        1: '1 bar bar',
+        2: '2 bar bar',
+        n: 'n bar bar'
+      }
+    })
+  })
+  it('should work with subkey stuff translations', function () {
+    expect(translate.resolveAliases({
+      A: 'bar',
+      B: {
+        hi: '1 {{A}} bar',
+        ho: '2 {{A}} bar',
+      }
+    })).to.eql({
+      A: 'bar',
+      B: {
+        hi: '1 bar bar',
+        ho: '2 bar bar',
+      }
+    })
+  })
+  it('should detect unknown aliases', function () {
+    expect(() => translate.resolveAliases({
+      A: '{{B}}'
+    })).to.throwException(function (e) {
+      expect(e.message).to.be('Unable to find translation for placeholder "B"')
+    })
+  })
+  it('should detect circle references', function () {
+    expect(() => translate.resolveAliases({
+      A: '{{B}}',
+      B: '{{A}}'
+    })).to.throwException(function (e) {
+      expect(e.message).to.be('Circle reference for "A" detected')
+    })
+  })
+  it('should detect using complex translations (e.G. pluralized ones)', function () {
+    expect(() => translate.resolveAliases({
+      A: {
+        1: 'one'
+      },
+      B: '{{A}}'
+    })).to.throwException(function (e) {
+      expect(e.message).to.be('You can only use plain translations as alias')
+    })
+  })
+  it('should not auto-resolve aliases when optionsflag is not set', function () {
+    var t = translate({
+      A: 'bar',
+      B: 'foo {{A}} bar'
+    })
+    expect(t('B')).to.be('foo {{A}} bar')
+  })
+  it('should auto-resolve aliases when optionsflag is set', function () {
+    var t = translate({
+      A: 'bar',
+      B: 'foo {{A}} bar'
+    }, {
+      resolveAliases: true
+    })
+    expect(t('B')).to.be('foo bar bar')
+  })
+})
