@@ -53,10 +53,10 @@
           val = '{' + part + '}'
         }
       }
-      if ( asArray ) {
+      if (asArray) {
         result[i] = val
       } else {
-        result += val + parts[i+1]
+        result += val + parts[i + 1]
       }
     }
     return result
@@ -121,8 +121,7 @@
           var propValue = translation[subKey]
           if (propValue != null) {
             translation = propValue
-          }
-          else if (typeof subKey === 'number') {
+          } else if (typeof subKey === 'number') {
             // get appropriate plural translation string
             translation = getPluralValue(translation, subKey)
           }
@@ -148,13 +147,13 @@
 
     // Convenience function.
     tFunc.arr = function () {
-        var opts = tFunc.opts
-        var normalArrayOption = opts.array
-        opts.array = true
-        var result = tFunc.apply(null, arguments)
-        opts.array = normalArrayOption
-        return result
-      };
+      var opts = tFunc.opts
+      var normalArrayOption = opts.array
+      opts.array = true
+      var result = tFunc.apply(null, arguments)
+      opts.array = normalArrayOption
+      return result
+    }
 
     tFunc.keys = messageObject || {}
     tFunc.opts = options
@@ -168,4 +167,3 @@
     window.translatejs = translatejs
   }
 })()
-

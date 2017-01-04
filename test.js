@@ -73,7 +73,7 @@ describe('translate.js', function () {
   })
 
   it('should return a translated string according to a potential dynamic subkey', function () {
-    var dynamicSubKey = 'foo';
+    var dynamicSubKey = 'foo'
     expect(t('translationWithSubkeys', dynamicSubKey)).to.equal('FOO')
   })
 
@@ -178,7 +178,6 @@ describe('translate.js', function () {
     expect(t3b('plain', {nonexistentreplacement: 'foo'})).to.equal('I like this.')
   })
 
-
   // wrong arguments
   var t4 = translate(translationsObject, 'asd')
   it('should return a translated string with the correct plural form and replaced placeholders: t(key, count, replacements) [wrong optio arg]', function () {
@@ -193,7 +192,6 @@ describe('translate.js', function () {
     expect(t5('translationWithSubkeys', 42)).to.equal('@@translationWithSubkeys.42@@')
     expect(t5('nonexistentkey', 42)).to.equal('@@nonexistentkey.42@@')
   })
-
 
   var t6Keys = {
     fruit: '{0} apples, {1} oranges, {2} kiwis',
@@ -292,7 +290,7 @@ describe('Return array option', function () {
   it('should return replacement-token translations as Arrays, when `array` option is supplied', function () {
     var t = translate({
       test: 'abc {xyz} def'
-    }, { array:true })
+    }, { array: true })
     expect(t('test', { xyz: { foo: 'bar' } })).to.eql(['abc ', { foo: 'bar' }, ' def'])
   })
   it('should return simple translations as strings, even when t.arr() is called', function () {
