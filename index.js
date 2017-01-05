@@ -172,23 +172,25 @@
   }
 
   translatejs.resolveAliases = function (translations) {
-    var keysHandeled = []
+    var keysInProcess = {};
     function resolveAliases (translation) {
       if (isObject(translation)) {
         return mapValues(translation, resolveAliases)
       }
-      return translation.replace(/{{(.*?)}}/, function (_, key) {
-        if (keysHandeled.indexOf(key) > 0) {
+      return translation.replace(/{{(.*?)}}/g, function (_, key) {
+        if (keysInProcess[key]) {
           throw new Error('Circle reference for "' + key + '" detected')
         }
-        keysHandeled.push(key)
+        keysInProcess[key] = true
         if (translations[key] == null) {
           throw new Error('Unable to find translation for placeholder "' + key + '"')
         }
         if (isObject(translations[key])) {
           throw new Error('You can only use plain translations as alias')
         }
-        return resolveAliases(translations[key])
+        var translation = resolveAliases(translations[key])
+        keysInProcess[key] = false
+        return translation
       })
     }
     return resolveAliases(translations)

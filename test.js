@@ -326,6 +326,41 @@ describe('alias usage', function () {
       C: '< foo bar bar >'
     })
   })
+  it('should be agnostic to the order of key declarations', function () {
+    expect(translate.resolveAliases({
+      C: '< {{B}} >',
+      B: 'foo {{A}} bar',
+      A: 'bar'
+    })).to.eql(translate.resolveAliases({
+      A: 'bar',
+      B: 'foo {{A}} bar',
+      C: '< {{B}} >'
+    }))
+  })
+  it('should allow multiple aliases per string', function () {
+    expect(translate.resolveAliases({
+      A: 'bar',
+      B: 'foo {{A}} {{A}}',
+      C: 'foo {{B}} {{A}}'
+    })).to.eql({
+      A: 'bar',
+      B: 'foo bar bar',
+      C: 'foo foo bar bar bar'
+    })
+  })
+  it('should allow complex nesting with multiple aliases per string', function () {
+    expect(translate.resolveAliases({
+      A: 'A',
+      B: 'B{{A}}B',
+      C: 'C{{A}}C',
+      D: 'D{{A}}{{B}}{{C}}D'
+    })).to.eql({
+      A: 'A',
+      B: 'BAB',
+      C: 'CAC',
+      D: 'DABABCACD'
+    })
+  })
   it('should work with pluralized stuff translations', function () {
     expect(translate.resolveAliases({
       A: 'bar',
@@ -370,7 +405,7 @@ describe('alias usage', function () {
       A: '{{B}}',
       B: '{{A}}'
     })).to.throwException(function (e) {
-      expect(e.message).to.be('Circle reference for "A" detected')
+      expect(e.message).to.be('Circle reference for "B" detected')
     })
   })
   it('should detect using complex translations (e.G. pluralized ones)', function () {
