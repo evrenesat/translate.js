@@ -177,7 +177,7 @@
       if (isObject(translation)) {
         return mapValues(translation, resolveAliases)
       }
-      return translation.replace(/{{(.*)}}/, function (_, key) {
+      return translation.replace(/{{(.*?)}}/, function (_, key) {
         if (keysHandeled.indexOf(key) > 0) {
           throw new Error('Circle reference for "' + key + '" detected')
         }
