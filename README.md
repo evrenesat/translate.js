@@ -179,6 +179,26 @@ var t = translate( messages_IS, { pluralize:pluralize_IS  })
 
 Here's a large list of [pluralization algorithms by language](http://docs.translatehouse.org/projects/localization-guide/en/latest/l10n/pluralforms.html?id=l10n/pluralforms).
 
+## Aliases
+
+Sometimes it's useful to have aliases for certain translation or to even allow
+to use translations in other ones. This is possible with the
+`resolveAliases`-function and by using `{{alias}}` in the translation strings:
+
+```js
+var message = translate.resolveAliases({
+  signup.supportChat: 'Support Chat'
+  signup.useTheSupportChat: 'Please use the {{signup.supportChat}}'
+  faq.supportChat: '{{signup.supportChat}}'
+  faq.useTheSupportChat: '{{signup.useTheSupportChat}}'
+})
+var t = translate(messages)
+```
+
+It's only possible with simple translations that don't have plural forms or
+subkeys. But you can nest it if you want.
+
+This is done during initialization so no aditional overhead during runtime.
 
 ## Working with VDOM libraries
 

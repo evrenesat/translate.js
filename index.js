@@ -53,10 +53,10 @@
           val = '{' + part + '}'
         }
       }
-      if ( asArray ) {
+      if (asArray) {
         result[i] = val
       } else {
-        result += val + parts[i+1]
+        result += val + parts[i + 1]
       }
     }
     return result
@@ -64,6 +64,9 @@
 
   var translatejs = function (messageObject, options) {
     options = options || {}
+    if (options.resolveAliases) {
+      messageObject = translatejs.resolveAliases(messageObject)
+    }
     var debug = options.debug
 
     function getPluralValue (translation, count) {
@@ -121,8 +124,7 @@
           var propValue = translation[subKey]
           if (propValue != null) {
             translation = propValue
-          }
-          else if (typeof subKey === 'number') {
+          } else if (typeof subKey === 'number') {
             // get appropriate plural translation string
             translation = getPluralValue(translation, subKey)
           }
@@ -148,18 +150,50 @@
 
     // Convenience function.
     tFunc.arr = function () {
-        var opts = tFunc.opts
-        var normalArrayOption = opts.array
-        opts.array = true
-        var result = tFunc.apply(null, arguments)
-        opts.array = normalArrayOption
-        return result
-      };
+      var opts = tFunc.opts
+      var normalArrayOption = opts.array
+      opts.array = true
+      var result = tFunc.apply(null, arguments)
+      opts.array = normalArrayOption
+      return result
+    }
 
     tFunc.keys = messageObject || {}
     tFunc.opts = options
 
     return tFunc
+  }
+
+  function mapValues (obj, fn) {
+    return Object.keys(obj).reduce(function (res, key) {
+      res[key] = fn(obj[key], key)
+      return res
+    }, {})
+  }
+
+  translatejs.resolveAliases = function (translations) {
+    var keysInProcess = {};
+    function resolveAliases (translation) {
+      if (isObject(translation)) {
+        return mapValues(translation, resolveAliases)
+      }
+      return translation.replace(/{{(.*?)}}/g, function (_, key) {
+        if (keysInProcess[key]) {
+          throw new Error('Circle reference for "' + key + '" detected')
+        }
+        keysInProcess[key] = true
+        if (translations[key] == null) {
+          throw new Error('Unable to find translation for placeholder "' + key + '"')
+        }
+        if (isObject(translations[key])) {
+          throw new Error('You can only use plain translations as alias')
+        }
+        var translation = resolveAliases(translations[key])
+        keysInProcess[key] = false
+        return translation
+      })
+    }
+    return resolveAliases(translations)
   }
 
   if (typeof module !== 'undefined' && module.exports) {
@@ -168,4 +202,3 @@
     window.translatejs = translatejs
   }
 })()
-
