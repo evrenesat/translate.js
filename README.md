@@ -181,12 +181,12 @@ Here's a large list of [pluralization algorithms by language](http://docs.transl
 
 ## Aliases
 
-Sometimes it's useful to have aliases for certain translation or to even allow
-to use translations in other ones. This is possible with the
-`resolveAliases`-function and by using `{{alias}}` in the translation strings:
+Sometimes it's useful to have aliases for certain translations or to even use
+translations in other ones. This is possible with the `resolveAliases`-function
+by using `{{alias}}` in the translation string:
 
 ```js
-var message = translate.resolveAliases({
+var messages = translate.resolveAliases({
   signup.supportChat: 'Support Chat'
   signup.useTheSupportChat: 'Please use the {{signup.supportChat}}'
   faq.supportChat: '{{signup.supportChat}}'
@@ -195,10 +195,20 @@ var message = translate.resolveAliases({
 var t = translate(messages)
 ```
 
+Alternativly you can set an options flag so this is done automatically once on
+initialisisation
+
+```js
+var t = translate(messages, {
+  resolveAliases: true
+})
+
+```
+
 It's only possible with simple translations that don't have plural forms or
 subkeys. But you can nest it if you want.
 
-This is done during initialization so no aditional overhead during runtime.
+This is done during initialisation so no additional overhead during runtime.
 
 ## Working with VDOM libraries
 
