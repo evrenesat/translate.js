@@ -31,6 +31,7 @@ var options = {
     // These are the defaults:
     debug: false,  //[Boolean]: Logs missing translations to console and add "@@" around output, if `true`.
     array: false,  //[Boolean]: Returns translations with placeholder-replacements as Arrays, if `true`.
+    resolveAliases: false,  //[Boolean]: Parses all translations for aliases and replaces them, if `true`.
     pluralize: function(n,translKey){ return Math.abs(n); }  //[Function(count,translationKey)]: Provides a custom pluralization mapping function.
 }
 
