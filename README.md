@@ -1,6 +1,4 @@
 [![Build Status](https://travis-ci.org/StephanHoyer/translate.js.svg)](https://travis-ci.org/StephanHoyer/translate.js)
-[![Dependency Status](https://david-dm.org/stephanhoyer/translate.js.svg)](https://david-dm.org/stephanhoyer/translate.js)
-[![devDependency Status](https://david-dm.org/stephanhoyer/translate.js/dev-status.svg)](https://david-dm.org/stephanhoyer/translate.js#info=devDependencies)
 [![rethink.js](https://img.shields.io/badge/rethink-js-yellow.svg)](https://github.com/rethinkjs/manifest)
 [![js-standard-style](https://img.shields.io/badge/code%20style-standard-brightgreen.svg)](http://standardjs.com/)
 
