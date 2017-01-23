@@ -180,22 +180,27 @@ Here's a large list of [pluralization algorithms by language](http://docs.transl
 
 ## Aliases
 
-Sometimes it's useful to have aliases for certain translations or to even use
-translations in other ones. This is possible with the `resolveAliases`-function
-by using `{{alias}}` in the translation string:
+Sometimes it's useful to have aliases for certain translations or to even reference
+translations inside other ones. This is possible with the `translate.resolveAliases(translationsObj)` function
+which returns a new translations object with all instances of `{{aliasedTranslationKey}}` in translation strings replaced with the corrsponding translation value:
 
 ```js
 var messages = translate.resolveAliases({
-  signup.supportChat: 'Support Chat'
-  signup.useTheSupportChat: 'Please use the {{signup.supportChat}}'
-  faq.supportChat: '{{signup.supportChat}}'
-  faq.useTheSupportChat: '{{signup.useTheSupportChat}}'
+  supportButton: 'Support Chat',
+  supportDirections: 'Please use the {{supportButton}}',
+  faq_supportChat: '...and then click the "{{supportButton}}" button below the text "{{supportDirections}}".',
 })
-var t = translate(messages)
+var t = translate(messages);
+
+t('faq_supportChat');
+// => '...and then click the "Support Chat" button below the text "Please use the Support Chat".'
 ```
 
-Alternativly you can set an options flag so this is done automatically once on
-initialisisation
+Aliasing only works on simple plain-text translations that don't have plural forms or
+subkeys. However, as seen in the example above, recursive aliases can be nested just fine.
+
+**Note:** Alternatively you can set an options flag so this is done automatically during
+initialisisation. (This causes no additional overhead during runtime.)
 
 ```js
 var t = translate(messages, {
@@ -204,10 +209,6 @@ var t = translate(messages, {
 
 ```
 
-It's only possible with simple translations that don't have plural forms or
-subkeys. But you can nest it if you want.
-
-This is done during initialisation so no additional overhead during runtime.
 
 ## Working with VDOM libraries
 
