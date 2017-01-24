@@ -201,7 +201,7 @@
           throw new Error('No translation for alias "' + token + '"')
         }
         var translation = resolveAliases(target)
-        keysInProcess[key] = false
+        keysInProcess[token] = false
         return translation
       })
     }

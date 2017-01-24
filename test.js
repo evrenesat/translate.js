@@ -421,19 +421,23 @@ describe('alias usage', function () {
   it('should allow targetting subkeys', function () {
     expect(translate.resolveAliases({
       A: { b:'bar' },
-      B: 'Foo {{A[b]}}'
+      B: 'Foo {{A[b]}}',
+      C: 'Foo {{A[b]}}'
     })).to.eql({
       A: { b:'bar' },
-      B: 'Foo bar'
+      B: 'Foo bar',
+      C: 'Foo bar'
     })
   })
   it('should ignore alias\' count/subkey if target is a plain string translation', function () {
     expect(translate.resolveAliases({
       A: 'bar',
-      B: 'Foo {{A[b]}}'
+      B: 'Foo {{A[b]}}',
+      C: 'Foo {{A[b]}}'
     })).to.eql({
       A: 'bar',
-      B: 'Foo bar'
+      B: 'Foo bar',
+      C: 'Foo bar'
     })
   })
   it('should throw when targetted subkeys don\'t exist', function () {
