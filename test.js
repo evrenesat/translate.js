@@ -448,6 +448,26 @@ describe('alias usage', function () {
       expect(e.message).to.be('No translation for alias "A[invalidSubkey]"')
     })
   })
+  it('should detect circle references in subkeyed targets', function () {
+    expect(() => translate.resolveAliases({
+      A: { a:'{{B}}' },
+      B: 'Foo {{A[a]}}'
+    })).to.throwException(function (e) {
+      expect(e.message).to.be('Circular reference for "B" detected')
+    })
+    expect(() => translate.resolveAliases({
+      B: 'Foo {{A[a]}}',
+      A: { a:'{{B}}' }
+    })).to.throwException(function (e) {
+      expect(e.message).to.be('Circular reference for "A[a]" detected')
+    })
+    expect(() => translate.resolveAliases({
+      A: { a:'{{B[b]}}' },
+      B: { b:'{{A[a]}}' }
+    })).to.throwException(function (e) {
+      expect(e.message).to.be('Circular reference for "B[b]" detected')
+    })
+  })
   it('should not auto-resolve aliases when optionsflag is not set', function () {
     var t = translate({
       A: 'bar',
