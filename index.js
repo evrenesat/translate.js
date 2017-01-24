@@ -191,11 +191,10 @@
         }
         var target = translations[key];
         if (isObject(target)) {
-          if (!subKey) {
-            throw new Error('You can\'t alias objects')
-          }
           if ( subKey ) {
             target = target[subKey]
+          } else {
+            throw new Error('You can\'t alias objects')
           }
         }
         if (target == null) {
