@@ -361,7 +361,7 @@ describe('alias usage', function () {
       D: 'DABABCACD'
     })
   })
-  it('should work with pluralized stuff translations', function () {
+  it('should work within pluralizations', function () {
     expect(translate.resolveAliases({
       A: 'bar',
       B: {
@@ -378,7 +378,7 @@ describe('alias usage', function () {
       }
     })
   })
-  it('should work with subkey stuff translations', function () {
+  it('should work within subkeys', function () {
     expect(translate.resolveAliases({
       A: 'bar',
       B: {
@@ -397,7 +397,7 @@ describe('alias usage', function () {
     expect(() => translate.resolveAliases({
       A: '{{B}}'
     })).to.throwException(function (e) {
-      expect(e.message).to.be('Unable to find translation for placeholder "B"')
+      expect(e.message).to.be('No translation for alias "B"')
     })
   })
   it('should detect circle references', function () {
@@ -405,17 +405,67 @@ describe('alias usage', function () {
       A: '{{B}}',
       B: '{{A}}'
     })).to.throwException(function (e) {
-      expect(e.message).to.be('Circle reference for "B" detected')
+      expect(e.message).to.be('Circular reference for "B" detected')
     })
   })
-  it('should detect using complex translations (e.G. pluralized ones)', function () {
+  it('should detect using complex translations (e.g. pluralized ones)', function () {
     expect(() => translate.resolveAliases({
       A: {
         1: 'one'
       },
       B: '{{A}}'
     })).to.throwException(function (e) {
-      expect(e.message).to.be('You can only use plain translations as alias')
+      expect(e.message).to.be('You can\'t alias objects')
+    })
+  })
+  it('should allow targetting subkeys', function () {
+    expect(translate.resolveAliases({
+      A: { b:'bar' },
+      B: 'Foo {{A[b]}}',
+      C: 'Foo {{A[b]}}'
+    })).to.eql({
+      A: { b:'bar' },
+      B: 'Foo bar',
+      C: 'Foo bar'
+    })
+  })
+  it('should ignore alias\' count/subkey if target is a plain string translation', function () {
+    expect(translate.resolveAliases({
+      A: 'bar',
+      B: 'Foo {{A[b]}}',
+      C: 'Foo {{A[b]}}'
+    })).to.eql({
+      A: 'bar',
+      B: 'Foo bar',
+      C: 'Foo bar'
+    })
+  })
+  it('should throw when targetted subkeys don\'t exist', function () {
+    expect(() => translate.resolveAliases({
+      A: { b:'bar' },
+      B: 'Foo {{A[invalidSubkey]}}'
+    })).to.throwException(function (e) {
+      expect(e.message).to.be('No translation for alias "A[invalidSubkey]"')
+    })
+  })
+  it('should detect circle references in subkeyed targets', function () {
+    expect(() => translate.resolveAliases({
+      A: { a:'{{B}}' },
+      B: 'Foo {{A[a]}}'
+    })).to.throwException(function (e) {
+      expect(e.message).to.be('Circular reference for "B" detected')
+    })
+    expect(() => translate.resolveAliases({
+      B: 'Foo {{A[a]}}',
+      A: { a:'{{B}}' }
+    })).to.throwException(function (e) {
+      expect(e.message).to.be('Circular reference for "A[a]" detected')
+    })
+    expect(() => translate.resolveAliases({
+      A: { a:'{{B[b]}}' },
+      B: { b:'{{A[a]}}' }
+    })).to.throwException(function (e) {
+      expect(e.message).to.be('Circular reference for "B[b]" detected')
     })
   })
   it('should not auto-resolve aliases when optionsflag is not set', function () {

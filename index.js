@@ -177,19 +177,31 @@
       if (isObject(translation)) {
         return mapValues(translation, resolveAliases)
       }
-      return translation.replace(/{{(.*?)}}/g, function (_, key) {
-        if (keysInProcess[key]) {
-          throw new Error('Circle reference for "' + key + '" detected')
+      return translation.replace(/{{(.*?)}}/g, function (_, token) {
+        if (keysInProcess[token]) {
+          throw new Error('Circular reference for "' + token + '" detected')
         }
-        keysInProcess[key] = true
-        if (translations[key] == null) {
-          throw new Error('Unable to find translation for placeholder "' + key + '"')
+        keysInProcess[token] = true
+        var key = token
+        var subKey = ''
+        var keyParts = token.match(/^(.+)\[(.+)\]$/);
+        if ( keyParts ) {
+          key = keyParts[1];
+          subKey = keyParts[2];
         }
-        if (isObject(translations[key])) {
-          throw new Error('You can only use plain translations as alias')
+        var target = translations[key];
+        if (isObject(target)) {
+          if ( subKey ) {
+            target = target[subKey]
+          } else {
+            throw new Error('You can\'t alias objects')
+          }
         }
-        var translation = resolveAliases(translations[key])
-        keysInProcess[key] = false
+        if (target == null) {
+          throw new Error('No translation for alias "' + token + '"')
+        }
+        var translation = resolveAliases(target)
+        keysInProcess[token] = false
         return translation
       })
     }

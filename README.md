@@ -188,19 +188,33 @@ which returns a new translations object with all instances of `{{aliasedTranslat
 var messages = translate.resolveAliases({
   supportButton: 'Support Chat',
   supportDirections: 'Please use the {{supportButton}}',
-  faq_supportChat: '...and then click the "{{supportButton}}" button below the text "{{supportDirections}}".',
+  faq_supportChat: '...and then click the "{{supportButton}}" button below the text "{{supportDirections}}".'
 })
-var t = translate(messages);
+var t = translate(messages)
 
-t('faq_supportChat');
+t('faq_supportChat')
 // => '...and then click the "Support Chat" button below the text "Please use the Support Chat".'
 ```
 
-Aliasing only works on simple plain-text translations that don't have plural forms or
-subkeys. However, as seen in the example above, recursive aliases can be nested just fine.
+Aliasing only works on simple plain-text translations that don't have plural forms or subkeys. However, as seen in the example above, recursive aliases can be nested just fine.
 
-**Note:** Alternatively you can set an options flag so this is done automatically during
-initialisisation. (This causes no additional overhead during runtime.)
+Subkeys can be aliased by using a `{{key[subkey]}}` syntax, and such lookups behave much the same as normal subkey lookups do.
+
+```js
+var messages = translate.resolveAliases({
+  button1: { label: 'Save',  tooltip: 'Save Changes' },
+  button2: 'Cancel',
+  text1: 'Click the "{{button1[label]}}" button when done.',
+  text2: 'Click the "{{button2[label]}}" button to exit.'
+})
+var t = translate(messages);
+
+t('text1')   // => 'Click the "Save" button when done.'
+t('text2')   // => 'Click the "Cancel" button to exit.'
+```
+
+**Note:** You can set an options flag to do this automatically during
+initializisation. (This one-time operation causes no additional overhead during runtime.)
 
 ```js
 var t = translate(messages, {
