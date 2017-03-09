@@ -30,7 +30,7 @@ var options = {
     debug: false,  //[Boolean]: Logs missing translations to console and add "@@" around output, if `true`.
     array: false,  //[Boolean]: Returns translations with placeholder-replacements as Arrays, if `true`.
     resolveAliases: false,  //[Boolean]: Parses all translations for aliases and replaces them, if `true`.
-    pluralize: function(n,translKey){ return Math.abs(n); }  //[Function(count,translationKey)]: Provides a custom pluralization mapping function.
+    pluralize: function(n,translKey){ return Math.abs(n) }  //[Function(count,translationKey)]: Provides a custom pluralization mapping function
 }
 
 var t = translate(messages, [options])
@@ -122,19 +122,19 @@ It is flexible, so you can add/replace translations after the fact by modifying 
 ```js
 //add/update keys
 t.keys['add-key'] = 'Sorry I am late!'
-t('add-key'); => 'Sorry I am late!'
+t('add-key') => 'Sorry I am late!'
 
 //replace keys object
 t.keys = { 'new-key': 'All is new!' }
-t('new-key'); => 'All is new!'
-t('add-key'); => 'add-key' (No longer translated)
+t('new-key') => 'All is new!'
+t('add-key') => 'add-key' (No longer translated)
 t('like') => 'like'        (No longer translated)
 ```
 
 Immutability can be achieved with a simple wrapper:
 
 ```js
-var t2 = function () { return t.apply(null,arguments); }
+var t2 = function () { return t.apply(null,arguments) }
 ```
 
 
@@ -196,9 +196,10 @@ t('faq_supportChat')
 // => '...and then click the "Support Chat" button below the text "Please use the Support Chat".'
 ```
 
-Aliasing only works on simple plain-text translations that don't have plural forms or subkeys. However, as seen in the example above, recursive aliases can be nested just fine.
+As seen in the example above, recursive aliases can be nested just fine.
 
-Subkeys can be aliased by using a `{{key[subkey]}}` syntax, and such lookups behave much the same as normal subkey lookups do.
+Subkeys can be aliased by using a `{{key[subkey]}}` syntax, and such lookups
+behave much the same as normal subkey lookups do.
 
 ```js
 var messages = translate.resolveAliases({
@@ -207,10 +208,29 @@ var messages = translate.resolveAliases({
   text1: 'Click the "{{button1[label]}}" button when done.',
   text2: 'Click the "{{button2[label]}}" button to exit.'
 })
-var t = translate(messages);
+var t = translate(messages)
 
 t('text1')   // => 'Click the "Save" button when done.'
 t('text2')   // => 'Click the "Cancel" button to exit.'
+```
+
+This also works with pluralized translations. Nothing is done automatically
+though. You have to define the counts explicitly.
+
+```js
+var messages = translate.resolveAliases({
+  thing: {
+    1: 'one thing',
+    n: '{n} things'
+  },
+  other: {
+    1: 'other {{thing[1]}}',
+    n: 'other {{thing[n]}}',
+  }
+})
+var t = translate(messages)
+
+t('other', 2)   // => 'other 2 things'
 ```
 
 **Note:** You can set an options flag to do this automatically during
@@ -243,7 +263,7 @@ t.arr('test', {
 You can also set this as the default behaviour, by supplying `array:true` option when initializing the translation function.
 
 ```js
- t = translate(keys, { array: true });
+ t = translate(keys, { array: true })
 
 t('test', {
   fancyImage: m('img', { src: 'image.jpg' })

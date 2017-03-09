@@ -429,6 +429,21 @@ describe('alias usage', function () {
       C: 'Foo bar'
     })
   })
+  it('should work with pluralized forms', function () {
+    expect(translate.resolveAliases({
+      A: { 1: '1 bar', n: '{n} bars' },
+      B: {
+        1: '1 Foo {{A[1]}}',
+        n: '{n} Foo {{A[n]}}'
+      }
+    })).to.eql({
+      A: { 1:'1 bar', n: '{n} bars' },
+      B: {
+        1: '1 Foo 1 bar',
+        n: '{n} Foo {n} bars'
+      }
+    })
+  })
   it('should ignore alias\' count/subkey if target is a plain string translation', function () {
     expect(translate.resolveAliases({
       A: 'bar',
