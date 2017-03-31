@@ -110,7 +110,8 @@
 
     var tFunc = function (translationKey, subKey, replacements) {
       var translation = tFunc.keys[translationKey]
-      var complex = subKey != null || replacements != null
+      var translationIsObject = isObject(translation);
+      var complex = translationIsObject || subKey != null || replacements != null
 
       if (complex) {
         if (isObject(subKey)) {
@@ -120,8 +121,8 @@
         }
         replacements = replacements || {}
 
-        if (subKey !== null && isObject(translation)) {
-          var propValue = translation[subKey]
+        if (translationIsObject) {
+          var propValue = (subKey != null && translation[subKey]) || translation.__
           if (propValue != null) {
             translation = propValue
           } else if (typeof subKey === 'number') {
