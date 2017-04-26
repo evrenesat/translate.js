@@ -22,7 +22,7 @@ Usage:
 var translate = require('translate.js')
 
 var messages = {
-  translationKey: 'Translation value'
+    translationKey: 'Translation value'
 }
 
 var options = {
@@ -30,7 +30,7 @@ var options = {
     debug: false,  //[Boolean]: Logs missing translations to console and add "@@" around output, if `true`.
     array: false,  //[Boolean]: Returns translations with placeholder-replacements as Arrays, if `true`.
     resolveAliases: false,  //[Boolean]: Parses all translations for aliases and replaces them, if `true`.
-    pluralize: function(n,translKey){ return Math.abs(n) }  //[Function(count,translationKey)]: Provides a custom pluralization mapping function
+    pluralize: function(n, translationKey){ return Math.abs(n) }  //[Function(count, translationKey)]: Provides a custom pluralization mapping function, should return a number
 }
 
 var t = translate(messages, [options])
@@ -127,14 +127,16 @@ t('add-key') => 'Sorry I am late!'
 //replace keys object
 t.keys = { 'new-key': 'All is new!' }
 t('new-key') => 'All is new!'
-t('add-key') => 'add-key' (No longer translated)
-t('like') => 'like'        (No longer translated)
+t('add-key') => 'add-key' // (No longer translated)
+t('like') => 'like'       // (No longer translated)
 ```
 
 Immutability can be achieved with a simple wrapper:
 
 ```js
-var t2 = function () { return t.apply(null,arguments) }
+var t2 = function () {
+    return t.apply(null,arguments)
+}
 ```
 
 
@@ -151,11 +153,13 @@ var messages_IS = {
         13: 'Baaahd luck!',
     }
 }
-var pluralize_IS = function ( n, tarnslationKey ) {
+var pluralize_IS = function ( n, translationKey ) {
     // Icelandic rules: Numbers ending in 1 are singular - unless ending in 11.
     return (n%10 !== 1 || n%100 === 11) ? 'p' : 's'
 }
-var t = translate( messages_IS, { pluralize: pluralize_IS })
+var t = translate( messages_IS, {
+    pluralize: pluralize_IS
+})
 ```
 
 With this setup, all failed numerical subkey lookups get passed through the pluralization function and the return value (in this case either 's' or 'p')
@@ -173,7 +177,9 @@ Translate.js comes with a predefined `pluralize` functions for [several language
 
 ```js
 var pluralize_IS = require('translate.js/pluralize/is')
-var t = translate( messages_IS, { pluralize:pluralize_IS  })
+var t = translate( messages_IS, {
+    pluralize: pluralize_IS
+})
 ```
 
 Here's a large list of [pluralization algorithms by language](http://docs.translatehouse.org/projects/localization-guide/en/latest/l10n/pluralforms.html?id=l10n/pluralforms).
