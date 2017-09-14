@@ -1,7 +1,6 @@
 /**
  * Microlib for translations with support for placeholders and multiple plural forms.
  *
- * v0.4.1
  *
  * Usage:
  *
