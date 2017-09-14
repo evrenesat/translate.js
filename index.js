@@ -122,7 +122,7 @@
         replacements = replacements || {}
 
         if (translationIsObject) {
-          var propValue = (subKey != null && translation[subKey]) || translation.__
+          var propValue = (subKey != null && translation[subKey]) || translation['*']
           if (propValue != null) {
             translation = propValue
           } else if (typeof subKey === 'number') {

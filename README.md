@@ -83,7 +83,7 @@ var messages = {
 
     hasDefaultSubkey: {
         foo: 'Foo subkey value',
-        __: 'Default value',
+        '*': 'Default value',
     },
 
     'Prosa Key': 'This is prosa!',  
@@ -116,7 +116,7 @@ t('saveButton', 'tooltip') => 'Save unsaved changes'
 t('simpleButton', 'label') => 'Simple'
 t('simpleButton', 'tooltip') => 'Simple'
 
-//default '__' subkey
+//default '*' subkey
 t('hasDefaultSubkey', 'foo') => 'Foo subkey value'
 t('hasDefaultSubkey', 'missing') => 'Default value'
 t('hasDefaultSubkey') => 'Default value'
