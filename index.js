@@ -141,7 +141,9 @@
             console.warn('Translation for "' + translationKey + '" not found.')
           }
         }
-      } if (complex || debug) {
+      }
+
+      if (complex || debug) {
         translation = replacePlaceholders(translation, replacements, subKey)
       }
       return translation
